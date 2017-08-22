@@ -1,0 +1,48 @@
+////////////////////////////////////////////////////////////////////////////////////////
+/// in this document i present pseudo code showing usage of PBSImageToolbox library. ///
+////////////////////////////////////////////////////////////////////////////////////////
+
+#include <exiv2/exiv2.hpp>
+#include <PBSImageToolbox/Toolbox.h>
+#include <PBSImageToolbox/ImageInfo.h>
+
+char *imageBinaryData = file.readAll().data(); // TIFF image
+PBSImageToolbox::Toolbox toolbox;
+toolbox.setSource(imageBinaryData);         // ownership of binary data passed to toolbox. 
+                                            // if toolbox previously had some image data stored 
+                                            // it is cleared before new image binary data is set
+
+char* pngBinaryData = toolbox.getImage(PBSImageToolbox::EImageFormat::Original);   // copy of original image is passed back to user
+char* pngBinaryData = toolbox.getImage(PBSImageToolbox::EImageFormat::PNG);        // TIFF >> PNG. copy of converted image is passed back to user
+char* epsBinaryData = toolbox.getImage(PBSImageToolbox::EImageFormat::EPS);        // TIFF >> EPS. copy of converted image is passed back to user
+
+toolbox.collectImageInfo();
+const PBSImageToolbox::ImageInfo& imgInfo = toolbox.getImageInfo();
+
+bool imageIsContainer = imgInfo.isContainer();
+quint8 imagesCount = imgInfo.getImagesCount(); // 0 if invalid image
+
+PBSImageToolbox::ImageInfo singleImageInfo = imgInfo;
+if (imageIsContainer)
+    singleImageInfo = imgInfo.getImageInfo(imagesCount - 1);
+
+if (singleImageInfo.hasThumbnail())	
+{
+    const PBSImageToolbox::Size& thumbSize = singleImageInfo.getThumbnailSize();
+    quint32 thumbWidth = thumbSize.width;
+    quint32 thumbHeight = thumbSize.height;
+}
+
+bool hasMask = singleImageInfo.hasMask();
+
+quint8 bitsPerPixel = singleImageInfo.getBitsPerPixel();
+PBSImageToolbox::EColorSpace colorSpace = singleImageInfo.getColorSpace();
+
+const PBSImageToolbox::Size& imageSize = singleImageInfo.getImageSize();
+quint32 imageWidth = imageSize.width;
+quint32 imageHeight = imageSize.height;
+
+PBSImageToolbox::EImageFormat imageFormat = singleImageInfo.getFormat();
+
+Exiv2::ExifData& exifData = singleImageInfo.getExifData();	// this will be forwarded from http://www.exiv2.org library. 
+
