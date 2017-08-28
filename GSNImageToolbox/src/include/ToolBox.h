@@ -2,12 +2,15 @@
 
 #include "gsnimagetoolbox_global.h"
 
+//#include "ImageMagick/Magick++/Image.h"
+
 #include "ImageInfo.h"
 #include <memory>
 
 namespace Magick
 {
 class Blob;
+class Image;
 }
 
 namespace GSNImageToolBox
@@ -22,12 +25,15 @@ public:
 
     void setSource(const char* data, size_t size);
 
-    const char *getImage(Common::EImageFormat format) const;
+    char* getImage(Common::EImageFormat format, size_t &dataSize);
+    QByteArray getImage(Common::EImageFormat format);
 
     bool collectImageInfo();
     const ImageInfo& getImageInfo() const;
 
 private:
+    bool applyMaskFromClippingPath(Magick::Image& manipulatedImg, Common::EImageFormat format);
+
     std::unique_ptr<Magick::Blob> m_sourceImg;
     std::unique_ptr<Magick::Blob> m_outputImg;
     ImageInfo m_imageInfo;
