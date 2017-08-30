@@ -25,13 +25,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     src/impl/ToolBox.cpp \
     src/impl/ImageInfo.cpp \
+    src/impl/converter/IConverter.cpp \
+    src/impl/converter/Tiff2PngConverter.cpp
 
 
 HEADERS += \
         src/include/ToolBox.h \
         src/include/gsnimagetoolbox_global.h \
         src/include/ImageInfo.h \
-        src/include/Common.h
+        src/include/Common.h \
+    src/impl/converter/IConverter.h \
+    src/impl/converter/Tiff2PngConverter.h
 
 unix {
     target.path = /usr/lib

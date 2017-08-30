@@ -4,7 +4,7 @@
 
 namespace GSNImageToolBox
 {
-namespace Common
+namespace common
 {
 
 enum EColorSpace
@@ -30,7 +30,7 @@ static const char* EImageFormatString[] =
 , "jpeg"
 };
 
-static_assert(sizeof(GSNImageToolBox::Common::EImageFormatString) / sizeof(char*) == GSNImageToolBox::Common::COUNT
+static_assert(sizeof(GSNImageToolBox::common::EImageFormatString) / sizeof(char*) == GSNImageToolBox::common::COUNT
               , "EImageFormat and EImageFormatString don't match. Did you forget to specify string representation of new enum?");
 
 } // namespace Common

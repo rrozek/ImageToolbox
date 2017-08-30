@@ -29,8 +29,8 @@ private:
     QSize m_thumbSize;
     QSize m_imageSize;
     quint8 m_bitsPerPixel;
-    Common::EColorSpace m_colorSpace;
-    Common::EImageFormat m_format;
+    common::EColorSpace m_colorSpace;
+    common::EImageFormat m_format;
 };
 
 } // namespace GSNImageToolBox

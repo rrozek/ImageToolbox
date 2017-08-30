@@ -22,7 +22,15 @@ void ToolBox::setSource(const char *data, size_t size)
     m_sourceImg.reset(new Magick::Blob(data, size));
 }
 
-char* ToolBox::getImage(Common::EImageFormat format, size_t &dataSize)
+void ToolBox::getImage(common::EImageFormat format, QByteArray& dataArray)
+{
+    size_t dataSize = 0;
+    char* rawArray = getImage(format, dataSize);
+    dataArray = QByteArray(rawArray, dataSize);
+    delete[] rawArray;
+}
+
+char* ToolBox::getImage(common::EImageFormat format, size_t& dataSize)
 {
     m_outputImg.reset(new Magick::Blob());
     Magick::Image img(*(m_sourceImg.get()));
@@ -32,23 +40,11 @@ char* ToolBox::getImage(Common::EImageFormat format, size_t &dataSize)
     img.write(m_outputImg.get());
 
     dataSize = m_outputImg->length();
-    char* data = new char[dataSize];
-    memcpy(data, static_cast<const char*>(m_outputImg->data()), dataSize);
 
-    return data;
-}
+    char* returnArray = new char[dataSize];
+    memcpy(returnArray, static_cast<const char*>(m_outputImg->data()), m_outputImg->length());
 
-QByteArray ToolBox::getImage(Common::EImageFormat format)
-{
-    m_outputImg.reset(new Magick::Blob());
-    Magick::Image img(*(m_sourceImg.get()));
-
-    applyMaskFromClippingPath(img, format);
-
-    img.write(m_outputImg.get());
-
-    QByteArray dataArray(static_cast<const char*>(m_outputImg->data()), m_outputImg->length());
-    return dataArray;
+    return returnArray;
 }
 
 bool ToolBox::collectImageInfo()
@@ -61,15 +57,25 @@ const ImageInfo& ToolBox::getImageInfo() const
     return m_imageInfo;
 }
 
-bool ToolBox::applyMaskFromClippingPath(Magick::Image &manipulatedImg, Common::EImageFormat format)
+bool ToolBox::applyMaskFromClippingPath(Magick::Image &manipulatedImg, common::EImageFormat format)
 {
     try
     {
+        qDebug() << "manipulatedImg.magick()" << QString::fromStdString(manipulatedImg.magick());
+        if (QString::fromStdString(manipulatedImg.magick()).contains("ps", Qt::CaseInsensitive)) // ps is for postscript
+        {
+            qDebug() << "applying 300dpi density";
+            Magick::Image tmpImg;
+            tmpImg.resolutionUnits(Magick::PixelsPerInchResolution);
+            tmpImg.density(Magick::Point(300,300));
+            tmpImg.read(*m_sourceImg.get());
+            manipulatedImg = tmpImg;
+        }
         manipulatedImg.alphaChannel(MagickCore::TransparentAlphaChannel);
         manipulatedImg.clip();
         manipulatedImg.alphaChannel(MagickCore::OpaqueAlphaChannel);
 
-        manipulatedImg.magick(Common::EImageFormatString[format]);
+        manipulatedImg.magick(common::EImageFormatString[format]);
     }
     catch( Magick::Exception &error)
     {
