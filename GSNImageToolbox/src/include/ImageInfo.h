@@ -5,6 +5,12 @@
 #include "Common.h"
 
 
+namespace Magick
+{
+class Blob;
+class Image;
+}
+
 namespace GSNImageToolBox
 {
 
@@ -12,18 +18,31 @@ class ImageInfo : public QObject
 {
     Q_OBJECT
 public:
-    explicit ImageInfo(QObject *parent = nullptr);
+    explicit ImageInfo(const QList<Magick::Image>& images, QObject *parent = nullptr);
+    ImageInfo(const Magick::Image& image, QObject *parent = nullptr);
+    ImageInfo(const ImageInfo& other);
+
+    void print() const;
 
     bool isContainer() const;
     quint8 getImagesCount() const;
     const ImageInfo& getImageInfo(quint8 imageNumber = 0) const;
     bool hasThumbnail() const;
 
+    const QSize& getThumbSize() const { return m_thumbSize; }
+    const QSize& getImageSize() const { return m_imageSize; }
+    quint8 getBitsPerPixel() const { return m_bitsPerPixel; }
+    common::EColorSpace getColorSpace() const { return m_colorSpace; }
+    common::EImageFormat getImageFormat() const { return m_format; }
 signals:
 
 public slots:
 
 private:
+
+    void collectImageInfo(const QList<Magick::Image>& images);
+    void collectImageInfo(const Magick::Image& image);
+
     QList<ImageInfo> m_images;
 //    Exiv2::ExifData m_exif;
     QSize m_thumbSize;

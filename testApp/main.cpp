@@ -6,19 +6,21 @@
 #include <QFile>
 #include <QByteArray>
 
+#include <QTimer>
+
 void printUsage();
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    QStringList params = a.arguments();
-    if (params.size() != 2)
-    {
-        printUsage();
-        return -1;
-    }
+//    QStringList params = a.arguments();
+//    if (params.size() != 2)
+//    {
+//        printUsage();
+//        return -1;
+//    }
     GSNImageToolBox::ToolBox toolbox;
-    QFile img(params[1]);
+    QFile img("test.img");
     if (!img.open(QIODevice::ReadOnly))
     {
         qDebug() << "cannot open file: " << img.fileName() << "reason, " << img.errorString();
@@ -27,7 +29,7 @@ int main(int argc, char *argv[])
     QByteArray imgData = img.readAll();
     img.close();
     toolbox.setSource(imgData.data(), imgData.size());
-
+    toolbox.printImageInfo();
     // -------------------------------------------------------------------
 
     QByteArray arrayEps;
@@ -72,6 +74,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     QByteArray imgEpsData = imgEps.readAll();
+    qDebug() << "data size: " << imgEpsData.size();
     imgEps.close();
     toolbox.setSource(imgEpsData.data(), imgEpsData.size());
 
@@ -94,6 +97,8 @@ int main(int argc, char *argv[])
         imgPng.close();
     }
 
+
+    QTimer::singleShot(0, Qt::CoarseTimer, &a, &QCoreApplication::quit);
     return a.exec();
 }
 

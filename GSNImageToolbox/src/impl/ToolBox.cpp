@@ -8,6 +8,7 @@ namespace GSNImageToolBox
 {
 
 ToolBox::ToolBox()
+    : m_sourceImg(new Magick::Image())
 {
     Magick::InitializeMagick(QDir::currentPath().toStdString().c_str());
 }
@@ -19,7 +20,29 @@ ToolBox::~ToolBox()
 
 void ToolBox::setSource(const char *data, size_t size)
 {
-    m_sourceImg.reset(new Magick::Blob(data, size));
+    m_sourceBlob.reset(new Magick::Blob(data, size));
+
+    try
+    {
+        QList<Magick::Image> images;
+        Magick::readImages(&images,*(m_sourceBlob.get()));
+        qDebug() << "########## dealing with multi-image data ##########";
+        m_imageInfo.reset(new ImageInfo(images));
+    }
+    catch( Magick::Exception &/*error*/)
+    {
+        try
+        {
+            m_sourceImg->read(*(m_sourceBlob.get()));
+            m_imageInfo.reset(new ImageInfo(*m_sourceImg));
+        }
+        catch( Magick::Exception &error)
+        {
+            qWarning() << "ImageMagick exception caught. Cannot read image.";
+            qWarning() << error.what();
+            return;
+        }
+    }
 }
 
 void ToolBox::getImage(common::EImageFormat format, QByteArray& dataArray)
@@ -32,30 +55,39 @@ void ToolBox::getImage(common::EImageFormat format, QByteArray& dataArray)
 
 char* ToolBox::getImage(common::EImageFormat format, size_t& dataSize)
 {
-    m_outputImg.reset(new Magick::Blob());
-    Magick::Image img(*(m_sourceImg.get()));
+    try
+    {
+        m_outputBlob.reset(new Magick::Blob());
+        Magick::Image img(*(m_sourceBlob.get()));
 
-    applyMaskFromClippingPath(img, format);
+        applyMaskFromClippingPath(img, format);
 
-    img.write(m_outputImg.get());
+        img.write(m_outputBlob.get());
 
-    dataSize = m_outputImg->length();
+        dataSize = m_outputBlob->length();
 
-    char* returnArray = new char[dataSize];
-    memcpy(returnArray, static_cast<const char*>(m_outputImg->data()), m_outputImg->length());
+        char* returnArray = new char[dataSize];
+        memcpy(returnArray, static_cast<const char*>(m_outputBlob->data()), m_outputBlob->length());
 
-    return returnArray;
+        return returnArray;
+    }
+    catch( Magick::Exception &error)
+    {
+        qDebug() << "caught ImageMagick exception. abc";
+        qDebug() << error.what();
+        dataSize = 0;
+        return nullptr;
+    }
 }
 
-bool ToolBox::collectImageInfo()
+void ToolBox::printImageInfo()
 {
-    Magick::Image img(*(m_sourceImg.get()));
-    return true;
+    m_imageInfo->print();
 }
 
 const ImageInfo& ToolBox::getImageInfo() const
 {
-    return m_imageInfo;
+    return *(m_imageInfo.get());
 }
 
 bool ToolBox::applyMaskFromClippingPath(Magick::Image &manipulatedImg, common::EImageFormat format)
@@ -66,10 +98,12 @@ bool ToolBox::applyMaskFromClippingPath(Magick::Image &manipulatedImg, common::E
         if (QString::fromStdString(manipulatedImg.magick()).contains("ps", Qt::CaseInsensitive)) // ps is for postscript
         {
             qDebug() << "applying 300dpi density";
+            qDebug() << manipulatedImg.resolutionUnits();
+            qDebug() << manipulatedImg.density().x() << manipulatedImg.density().y();
             Magick::Image tmpImg;
             tmpImg.resolutionUnits(Magick::PixelsPerInchResolution);
             tmpImg.density(Magick::Point(300,300));
-            tmpImg.read(*m_sourceImg.get());
+            tmpImg.read(*m_sourceBlob.get());
             manipulatedImg = tmpImg;
         }
         manipulatedImg.alphaChannel(MagickCore::TransparentAlphaChannel);

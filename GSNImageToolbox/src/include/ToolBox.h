@@ -28,15 +28,19 @@ public:
     void getImage(common::EImageFormat format, QByteArray &dataArray);
     char* getImage(common::EImageFormat format, size_t &dataSize);
 
-    bool collectImageInfo();
+    void printImageInfo();
     const ImageInfo& getImageInfo() const;
 
 private:
     bool applyMaskFromClippingPath(Magick::Image& manipulatedImg, common::EImageFormat format);
 
-    std::unique_ptr<Magick::Blob> m_sourceImg;
-    std::unique_ptr<Magick::Blob> m_outputImg;
-    ImageInfo m_imageInfo;
+    // TODO: Change this to lists of images.
+    // add separate handlers for lists and single images and treat that class as interface
+    std::unique_ptr<Magick::Blob> m_sourceBlob;
+    Magick::Image* m_sourceImg;
+
+    std::unique_ptr<Magick::Blob> m_outputBlob;
+    std::unique_ptr<ImageInfo> m_imageInfo;
 };
 
 } // namespace GSNImageToolBox
