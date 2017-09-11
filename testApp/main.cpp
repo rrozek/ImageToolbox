@@ -6,12 +6,19 @@
 #include <QFile>
 #include <QByteArray>
 
+void printUsage();
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-
+    QStringList params = a.arguments();
+    if (params.size() != 2)
+    {
+        printUsage();
+        return -1;
+    }
     GSNImageToolBox::ToolBox toolbox;
-    QFile img("test.tiff");
+    QFile img(params[1]);
     if (!img.open(QIODevice::ReadOnly))
     {
         qDebug() << "cannot open file: " << img.fileName() << "reason, " << img.errorString();
@@ -88,4 +95,9 @@ int main(int argc, char *argv[])
     }
 
     return a.exec();
+}
+
+void printUsage()
+{
+    qDebug() << "usage: testApp <abs_path_to_input_img>";
 }

@@ -43,8 +43,8 @@ unix {
 }
 
 
-unix:!macx|win32: LIBS += -L$$PWD/src/lib/ -lCORE_RL_Magick++_
-unix:!macx|win32: LIBS += -L$$PWD/src/lib/ -lCORE_RL_MagickCore_
+unix:!macx|win32: LIBS += -L$$PWD/src/lib/x64 -lCORE_RL_Magick++_
+unix:!macx|win32: LIBS += -L$$PWD/src/lib/x64 -lCORE_RL_MagickCore_
 
 INCLUDEPATH += $$PWD/src/include/ImageMagick
 DEPENDPATH += $$PWD/src/include/ImageMagick

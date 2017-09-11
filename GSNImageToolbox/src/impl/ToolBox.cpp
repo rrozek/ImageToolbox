@@ -49,6 +49,7 @@ char* ToolBox::getImage(common::EImageFormat format, size_t& dataSize)
 
 bool ToolBox::collectImageInfo()
 {
+    Magick::Image img(*(m_sourceImg.get()));
     return true;
 }
 

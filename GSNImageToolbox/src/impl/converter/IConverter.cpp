@@ -10,5 +10,10 @@ IConverter::IConverter()
 
 }
 
+IConverter::~IConverter()
+{
+
+}
+
 }
 }

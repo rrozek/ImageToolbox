@@ -14,7 +14,7 @@ public:
     IConverter();
     virtual ~IConverter();
 
-    bool convert(Magick::Image& sourceImg, Magick::Blob& outputData) = 0;
+    virtual bool convert(Magick::Image& sourceImg, Magick::Blob& outputData) = 0;
 };
 
 }
