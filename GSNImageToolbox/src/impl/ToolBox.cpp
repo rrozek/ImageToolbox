@@ -1,14 +1,20 @@
 #include "ToolBox.h"
 
-#include "ImageMagick/Magick++.h"
+#include "Magick++.h"
+
+#include "StdCapture.h"
+
 #include <QDir>
 #include <QDebug>
+#include <QRegularExpression>
+
+#include "src/impl/handlers/SingleImageHandler.h"
+//#include "src/impl/handlers/MultiPageImageHandler.h"
 
 namespace GSNImageToolBox
 {
 
 ToolBox::ToolBox()
-    : m_sourceImg(new Magick::Image())
 {
     Magick::InitializeMagick(QDir::currentPath().toStdString().c_str());
 }
@@ -20,105 +26,128 @@ ToolBox::~ToolBox()
 
 void ToolBox::setSource(const char *data, size_t size)
 {
-    m_sourceBlob.reset(new Magick::Blob(data, size));
+    qDebug() << "##### applying new source... #####";
+    Magick::Blob sourceBlob(data, size);
+
+    Magick::Image sourceImage;
+    StdCapture captureStd;
 
     try
     {
-        QList<Magick::Image> images;
-        Magick::readImages(&images,*(m_sourceBlob.get()));
-        qDebug() << "########## dealing with multi-image data ##########";
-        m_imageInfo.reset(new ImageInfo(images));
+        captureStd.BeginCapture();
+
+        sourceImage.verbose(true);
+        sourceImage.quiet(true);
+        sourceImage.ping(sourceBlob);
+
+        captureStd.EndCapture();
     }
-    catch( Magick::Exception &/*error*/)
+    catch( Magick::Exception &error)
     {
-        try
-        {
-            m_sourceImg->read(*(m_sourceBlob.get()));
-            m_imageInfo.reset(new ImageInfo(*m_sourceImg));
-        }
-        catch( Magick::Exception &error)
-        {
-            qWarning() << "ImageMagick exception caught. Cannot read image.";
-            qWarning() << error.what();
-            return;
-        }
+        captureStd.EndCapture();
+        qDebug() << captureStd.GetCapture().c_str();
+        qWarning() << "ImageMagick Exception: " << error.what();
+        return;
     }
+    catch(...)
+    {
+        captureStd.EndCapture();
+        qDebug() << captureStd.GetCapture().c_str();
+        qWarning() << "Exception thrown...";
+        return;
+    }
+
+    QStringList pingLines = QString::fromStdString(captureStd.GetCapture()).split("\n", QString::KeepEmptyParts);
+    qDebug() << "captured: " << pingLines;
+    QRegularExpression regex;
+    regex.setPattern("^\\[\\d*\\]");
+
+    quint8 pagesCount = 0;
+    bool isMultiImage = false;
+
+    for ( QString line : pingLines )
+    {
+        if (line.contains(regex))
+            pagesCount++;
+    }
+    if (pagesCount > 1)
+        isMultiImage = true;
+
+    qDebug() << "Detected: " << pagesCount << "images";
+    qDebug() << "final verdict - is multi-image: " << isMultiImage;
+
+    if (isMultiImage)
+    {
+//        m_handler.reset(new handlers::MultiPageImageHandler(sourceBlob));
+        qWarning() << "multi image not supported yet";
+        return;
+    }
+    else
+        m_handler.reset(new handlers::SingleImageHandler(sourceBlob));
+
+    m_handler->init();
 }
 
 void ToolBox::getImage(common::EImageFormat format, QByteArray& dataArray)
 {
+    getImage(0, format, dataArray);
+}
+
+void ToolBox::getImage(quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray)
+{
     size_t dataSize = 0;
-    char* rawArray = getImage(format, dataSize);
+    char* rawArray = getImage(imageNumber, format, dataSize);
     dataArray = QByteArray(rawArray, dataSize);
     delete[] rawArray;
 }
 
 char* ToolBox::getImage(common::EImageFormat format, size_t& dataSize)
 {
-    try
+    return getImage(0, format, dataSize);
+}
+
+char *ToolBox::getImage(quint8 imageNumber, common::EImageFormat format, size_t &dataSize)
+{
+
+    if (m_handler == nullptr)
     {
-        m_outputBlob.reset(new Magick::Blob());
-        Magick::Image img(*(m_sourceBlob.get()));
-
-        applyMaskFromClippingPath(img, format);
-
-        img.write(m_outputBlob.get());
-
-        dataSize = m_outputBlob->length();
-
-        char* returnArray = new char[dataSize];
-        memcpy(returnArray, static_cast<const char*>(m_outputBlob->data()), m_outputBlob->length());
-
-        return returnArray;
-    }
-    catch( Magick::Exception &error)
-    {
-        qDebug() << "caught ImageMagick exception. abc";
-        qDebug() << error.what();
+        qWarning() << "No image set so far";
         dataSize = 0;
         return nullptr;
     }
+    return m_handler->getImage(imageNumber, format, dataSize);
+}
+
+quint8 ToolBox::getImageCount() const
+{
+
+    if (m_handler == nullptr)
+    {
+        qWarning() << "No image set so far";
+        return 0;
+    }
+    return m_handler->getImageCount();
 }
 
 void ToolBox::printImageInfo()
 {
-    m_imageInfo->print();
+    if (m_handler == nullptr)
+    {
+        qWarning() << "No image set so far";
+        return;
+    }
+    m_handler->printImageInfo();
 }
 
 const ImageInfo& ToolBox::getImageInfo() const
 {
-    return *(m_imageInfo.get());
-}
 
-bool ToolBox::applyMaskFromClippingPath(Magick::Image &manipulatedImg, common::EImageFormat format)
-{
-    try
+    if (m_handler == nullptr)
     {
-        qDebug() << "manipulatedImg.magick()" << QString::fromStdString(manipulatedImg.magick());
-        if (QString::fromStdString(manipulatedImg.magick()).contains("ps", Qt::CaseInsensitive)) // ps is for postscript
-        {
-            qDebug() << "applying 300dpi density";
-            qDebug() << manipulatedImg.resolutionUnits();
-            qDebug() << manipulatedImg.density().x() << manipulatedImg.density().y();
-            Magick::Image tmpImg;
-            tmpImg.resolutionUnits(Magick::PixelsPerInchResolution);
-            tmpImg.density(Magick::Point(300,300));
-            tmpImg.read(*m_sourceBlob.get());
-            manipulatedImg = tmpImg;
-        }
-        manipulatedImg.alphaChannel(MagickCore::TransparentAlphaChannel);
-        manipulatedImg.clip();
-        manipulatedImg.alphaChannel(MagickCore::OpaqueAlphaChannel);
-
-        manipulatedImg.magick(common::EImageFormatString[format]);
+        qWarning() << "No image set so far";
+        return ImageInfo();
     }
-    catch( Magick::Exception &error)
-    {
-        qDebug() << "could not apply mask from clipping path." << error.what();
-        return false;
-    }
-    return true;
-
+    return m_handler->getImageInfo();
 }
 
 } // namespace GSNImageToolBox

@@ -19,7 +19,6 @@ int main(int argc, char *argv[])
 //        printUsage();
 //        return -1;
 //    }
-    GSNImageToolBox::ToolBox toolbox;
     QFile img("test.img");
     if (!img.open(QIODevice::ReadOnly))
     {
@@ -28,6 +27,8 @@ int main(int argc, char *argv[])
     }
     QByteArray imgData = img.readAll();
     img.close();
+    qDebug() << "data size: " << imgData.size();
+    GSNImageToolBox::ToolBox toolbox;
     toolbox.setSource(imgData.data(), imgData.size());
     toolbox.printImageInfo();
     // -------------------------------------------------------------------
@@ -74,7 +75,6 @@ int main(int argc, char *argv[])
         return -1;
     }
     QByteArray imgEpsData = imgEps.readAll();
-    qDebug() << "data size: " << imgEpsData.size();
     imgEps.close();
     toolbox.setSource(imgEpsData.data(), imgEpsData.size());
 

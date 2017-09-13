@@ -9,6 +9,7 @@ QT       -= gui
 TARGET = GSNImageToolbox
 TEMPLATE = lib
 
+CONFIG += c++11
 DEFINES += GSNIMAGETOOLBOX_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
@@ -26,7 +27,10 @@ SOURCES += \
     src/impl/ToolBox.cpp \
     src/impl/ImageInfo.cpp \
     src/impl/converter/IConverter.cpp \
-    src/impl/converter/Tiff2PngConverter.cpp
+    src/impl/converter/Tiff2PngConverter.cpp \
+    src/impl/handlers/MultiPageImageHandler.cpp \
+    src/impl/handlers/SingleImageHandler.cpp \
+    src/impl/handlers/IHandler.cpp
 
 
 HEADERS += \
@@ -35,7 +39,11 @@ HEADERS += \
         src/include/ImageInfo.h \
         src/include/Common.h \
     src/impl/converter/IConverter.h \
-    src/impl/converter/Tiff2PngConverter.h
+    src/impl/converter/Tiff2PngConverter.h \
+    src/impl/handlers/IHandler.h \
+    src/impl/handlers/MultiPageImageHandler.h \
+    src/impl/handlers/SingleImageHandler.h \
+    src/impl/StdCapture.h
 
 unix {
     target.path = /usr/lib
@@ -43,10 +51,16 @@ unix {
 }
 
 
-unix:!macx|win32: LIBS += -L$$PWD/src/lib/x64 -lCORE_RL_Magick++_
-unix:!macx|win32: LIBS += -L$$PWD/src/lib/x64 -lCORE_RL_MagickCore_
+win32: LIBS += -L$$PWD/src/lib/x64 -lCORE_RL_Magick++_
+win32: LIBS += -L$$PWD/src/lib/x64 -lCORE_RL_MagickCore_
 
-INCLUDEPATH += $$PWD/src/include/ImageMagick
-DEPENDPATH += $$PWD/src/include/ImageMagick
+unix:!macx: LIBS += -L/home/rozek/ImageMagickInstall/lib -lMagick++-7.Q16HDRI
+unix:!macx: LIBS += -L/home/rozek/ImageMagickInstall/lib -lMagickCore-7.Q16HDRI
+
+unix:!macx: INCLUDEPATH += /home/rozek/ImageMagickInstall/include/ImageMagick-7
+unix:!macx: DEPENDPATH += /home/rozek/ImageMagickInstall/include/ImageMagick-7
 INCLUDEPATH += $$PWD/src/include
 DEPENDPATH += $$PWD/src/include
+
+unix:!macx: INCLUDEPATH += $$PWD/src/include/ImageMagick
+unix:!macx: DEPENDPATH += $$PWD/src/include/ImageMagick

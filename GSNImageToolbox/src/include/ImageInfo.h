@@ -1,26 +1,25 @@
 #pragma once
 
-#include <QObject>
 #include <QSize>
+#include <QList>
 #include "Common.h"
-
+#include <memory>
 
 namespace Magick
 {
-class Blob;
 class Image;
 }
 
 namespace GSNImageToolBox
 {
-
-class ImageInfo : public QObject
+class ImageInfo
 {
-    Q_OBJECT
 public:
-    explicit ImageInfo(const QList<Magick::Image>& images, QObject *parent = nullptr);
-    ImageInfo(const Magick::Image& image, QObject *parent = nullptr);
+    explicit ImageInfo(const QList<Magick::Image>& images);
+    ImageInfo(const Magick::Image& image);
     ImageInfo(const ImageInfo& other);
+    ImageInfo();
+    ~ImageInfo();
 
     void print() const;
 
@@ -34,16 +33,13 @@ public:
     quint8 getBitsPerPixel() const { return m_bitsPerPixel; }
     common::EColorSpace getColorSpace() const { return m_colorSpace; }
     common::EImageFormat getImageFormat() const { return m_format; }
-signals:
-
-public slots:
 
 private:
 
     void collectImageInfo(const QList<Magick::Image>& images);
     void collectImageInfo(const Magick::Image& image);
 
-    QList<ImageInfo> m_images;
+    QList<std::shared_ptr<ImageInfo>> m_images;
 //    Exiv2::ExifData m_exif;
     QSize m_thumbSize;
     QSize m_imageSize;

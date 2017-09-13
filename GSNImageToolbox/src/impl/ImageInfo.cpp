@@ -1,26 +1,24 @@
 #include "ImageInfo.h"
 
 #include <QDebug>
-#include "ImageMagick/Magick++.h"
+#include "Magick++.h"
 
 namespace GSNImageToolBox
 {
 
-ImageInfo::ImageInfo(const QList<Magick::Image> &images, QObject *parent)
-    : QObject(parent)
+ImageInfo::ImageInfo(const QList<Magick::Image> &images)
 {
     collectImageInfo(images);
 }
 
-ImageInfo::ImageInfo(const Magick::Image& image, QObject *parent)
-    : QObject(parent)
+ImageInfo::ImageInfo(const Magick::Image& image)
 {
     collectImageInfo(image);
 }
 
 ImageInfo::ImageInfo(const ImageInfo &other)
 {
-    for ( ImageInfo info : other.m_images)
+    for ( std::shared_ptr<ImageInfo> info : other.m_images)
     {
         m_images.append(info);
     }
@@ -32,12 +30,22 @@ ImageInfo::ImageInfo(const ImageInfo &other)
     m_format = other.m_format;
 }
 
+ImageInfo::ImageInfo()
+{
+
+}
+
+ImageInfo::~ImageInfo()
+{
+    m_images.clear();
+}
+
 void ImageInfo::print() const
 {
     if (isContainer())
     {
-        for ( const ImageInfo& info : m_images )
-            info.print();
+        for ( std::shared_ptr<ImageInfo> info : m_images )
+            info->print();
     }
     else
     {
@@ -62,7 +70,9 @@ quint8 ImageInfo::getImagesCount() const
 
 const ImageInfo &ImageInfo::getImageInfo(quint8 imageNumber) const
 {
-    return m_images.at(imageNumber);
+    if ( m_images.size() <= imageNumber )
+        return ImageInfo();
+    return *m_images.at(imageNumber);
 }
 
 bool ImageInfo::hasThumbnail() const
@@ -74,8 +84,7 @@ void ImageInfo::collectImageInfo(const QList<Magick::Image> &images)
 {
     for ( const Magick::Image& image : images)
     {
-        ImageInfo info(image);
-        m_images.append(info);
+        m_images.append(std::shared_ptr<ImageInfo>(new ImageInfo(image)));
     }
 }
 
