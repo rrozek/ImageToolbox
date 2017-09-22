@@ -51,8 +51,8 @@ unix {
 }
 
 
-win32: LIBS += -L$$PWD/src/lib/x64 -lCORE_RL_Magick++_
-win32: LIBS += -L$$PWD/src/lib/x64 -lCORE_RL_MagickCore_
+win32: LIBS += -L$$PWD/src/lib/ -lCORE_RL_Magick++_
+win32: LIBS += -L$$PWD/src/lib/ -lCORE_RL_MagickCore_
 
 unix:!macx: LIBS += -L/home/rozek/ImageMagickInstall/lib -lMagick++-7.Q16HDRI
 unix:!macx: LIBS += -L/home/rozek/ImageMagickInstall/lib -lMagickCore-7.Q16HDRI
@@ -62,5 +62,5 @@ unix:!macx: DEPENDPATH += /home/rozek/ImageMagickInstall/include/ImageMagick-7
 INCLUDEPATH += $$PWD/src/include
 DEPENDPATH += $$PWD/src/include
 
-unix:!macx: INCLUDEPATH += $$PWD/src/include/ImageMagick
-unix:!macx: DEPENDPATH += $$PWD/src/include/ImageMagick
+INCLUDEPATH += $$PWD/src/include/ImageMagick
+DEPENDPATH += $$PWD/src/include/ImageMagick

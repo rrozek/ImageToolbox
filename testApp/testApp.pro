@@ -22,7 +22,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-unix:!macx|win32: LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_7_0_GCC_64bit-Debug/ -lGSNImageToolbox
+unix:!macx|win32: LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_32bit-Release/release/ -lGSNImageToolbox
+
+#unix:!macx|win32: LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_7_0_GCC_64bit-Debug/ -lGSNImageToolbox
 #unix:!macx|win32: LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_7_0_GCC_64bit-Release/ -lGSNImageToolbox
 
 INCLUDEPATH += $$PWD/../GSNImageToolbox/src/include

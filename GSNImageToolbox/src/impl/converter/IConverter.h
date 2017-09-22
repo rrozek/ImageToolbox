@@ -1,5 +1,5 @@
 #pragma once
-#include "Magick++.h"
+#include "ImageMagick/Magick++.h"
 
 #include "Common.h"
 
