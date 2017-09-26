@@ -2,11 +2,10 @@
 
 #include "Magick++.h"
 
-#include "StdCapture.h"
-
-#include <QDir>
 #include <QDebug>
-#include <QRegularExpression>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include "src/impl/handlers/SingleImageHandler.h"
 //#include "src/impl/handlers/MultiPageImageHandler.h"
@@ -30,50 +29,37 @@ void ToolBox::setSource(const char *data, size_t size)
     Magick::Blob sourceBlob(data, size);
 
     Magick::Image sourceImage;
-    StdCapture captureStd;
-
+    Magick::Blob jsonMetadataRaw;
     try
     {
-        captureStd.BeginCapture();
-
         sourceImage.verbose(true);
-        sourceImage.quiet(true);
         sourceImage.ping(sourceBlob);
-
-        captureStd.EndCapture();
+        sourceImage.fileName("json:");
+        sourceImage.write(&jsonMetadataRaw);
     }
     catch( Magick::Exception &error)
     {
-        captureStd.EndCapture();
-        qDebug() << captureStd.GetCapture().c_str();
         qWarning() << "ImageMagick Exception: " << error.what();
         return;
     }
-    catch(...)
+    QJsonDocument jsonMetadata = QJsonDocument::fromRawData(jsonMetadataRaw.data(), jsonMetadataRaw.length());
+    if (jsonMetadata.isNull())
     {
-        captureStd.EndCapture();
-        qDebug() << captureStd.GetCapture().c_str();
-        qWarning() << "Exception thrown...";
+        qWarning() << "invalid input json structure.";
+        return;
+    }
+    bool isMultiImage = false;
+
+    if (jsonMetadata.isArray())
+        isMultiImage = true;
+    else if (jsonMetadata.isObject())
+        isMultiImage = false;
+    else
+    {
+        qWarning() << "neither object nor array detected. invalid json file?";
         return;
     }
 
-    QStringList pingLines = QString::fromStdString(captureStd.GetCapture()).split("\n", QString::KeepEmptyParts);
-    qDebug() << "captured: " << pingLines;
-    QRegularExpression regex;
-    regex.setPattern("^\\[\\d*\\]");
-
-    quint8 pagesCount = 0;
-    bool isMultiImage = false;
-
-    for ( QString line : pingLines )
-    {
-        if (line.contains(regex))
-            pagesCount++;
-    }
-    if (pagesCount > 1)
-        isMultiImage = true;
-
-    qDebug() << "Detected: " << pagesCount << "images";
     qDebug() << "final verdict - is multi-image: " << isMultiImage;
 
     if (isMultiImage)
