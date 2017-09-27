@@ -691,6 +691,8 @@ namespace Magick
     // pixels, not counting the center pixel.  The sigma_ parameter
     // specifies the standard deviation of the Laplacian, in pixels.
     void charcoal(const double radius_=0.0,const double sigma_=1.0);
+    void charcoalChannel(const ChannelType channel_,const double radius_=0.0,
+      const double sigma_=1.0);
 
     // Chop image (remove vertical or horizontal subregion of image)
     // FIXME: describe how geometry argument is used to select either
@@ -1069,6 +1071,10 @@ namespace Magick
 
     // Remap image colors with closest color from reference image
     void map(const Image &mapImage_,const bool dither_=false);
+
+    // Delineate arbitrarily shaped clusters in the image.
+    void meanShift(const size_t width_,const size_t height_,
+      const double color_distance_);
 
     // Filter image by replacing each pixel component with the median
     // color in a circular neighborhood
