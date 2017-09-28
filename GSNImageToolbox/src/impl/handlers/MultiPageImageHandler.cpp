@@ -26,15 +26,6 @@ void MultiPageImageHandler::handleSource()
 
 }
 
-void MultiPageImageHandler::collectImageInfo()
-{
-//    if (m_sourceImage == nullptr)
-//    {
-//        qWarning() << Q_FUNC_INFO << "source image uninitialized";
-//        return;
-//    }
-}
-
 void MultiPageImageHandler::applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format)
 {
 

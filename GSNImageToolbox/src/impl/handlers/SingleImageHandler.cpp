@@ -89,16 +89,6 @@ void SingleImageHandler::handleSource()
     m_sourceImage.reset(new Magick::Image(tmpImg));
 }
 
-void SingleImageHandler::collectImageInfo()
-{
-    if (m_sourceImage == nullptr)
-    {
-        qWarning() << Q_FUNC_INFO << "source image uninitialized";
-        return;
-    }
-    m_imageInfo.reset(new ImageInfo(*m_sourceImage));
-}
-
 void SingleImageHandler::applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format)
 {
     try

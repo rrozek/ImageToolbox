@@ -5,6 +5,9 @@
 #include "Common.h"
 #include <memory>
 
+#include <QJsonObject>
+#include <QJsonArray>
+
 namespace Magick
 {
 class Image;
@@ -34,6 +37,7 @@ public:
     common::EColorSpace getColorSpace() const { return m_colorSpace; }
     common::EImageFormat getImageFormat() const { return m_format; }
 
+    static ImageInfo invalid;
 private:
 
     void collectImageInfo(const QList<Magick::Image>& images);

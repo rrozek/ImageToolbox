@@ -3,6 +3,8 @@
 #include "Common.h"
 #include "ImageInfo.h"
 
+#include <QJsonDocument>
+
 namespace Magick
 {
 class Blob;
@@ -17,7 +19,7 @@ namespace handlers
 class IHandler
 {
 public:
-    IHandler(Magick::Blob &blob);
+    IHandler(Magick::Blob &blob, const QJsonDocument& jsonImageInfo);
     virtual ~IHandler();
 
     void init();
@@ -32,10 +34,10 @@ protected:
 
     virtual void applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format) = 0;
     virtual void handleSource() = 0;
-    virtual void collectImageInfo() = 0;
 
     std::shared_ptr<Magick::Blob> m_sourceBlob;
     std::unique_ptr<ImageInfo> m_imageInfo;
+    QJsonDocument m_jsonImageInfo;
 };
 
 }

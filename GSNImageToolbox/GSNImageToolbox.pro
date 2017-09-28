@@ -34,16 +34,15 @@ SOURCES += \
 
 
 HEADERS += \
-        src/include/ToolBox.h \
-        src/include/gsnimagetoolbox_global.h \
-        src/include/ImageInfo.h \
-        src/include/Common.h \
+    src/include/ToolBox.h \
+    src/include/gsnimagetoolbox_global.h \
+    src/include/ImageInfo.h \
+    src/include/Common.h \
     src/impl/converter/IConverter.h \
     src/impl/converter/Tiff2PngConverter.h \
     src/impl/handlers/IHandler.h \
     src/impl/handlers/MultiPageImageHandler.h \
-    src/impl/handlers/SingleImageHandler.h \
-    src/impl/StdCapture.h
+    src/impl/handlers/SingleImageHandler.h
 
 unix {
     target.path = /usr/lib
@@ -51,14 +50,14 @@ unix {
 }
 
 
-win32: LIBS += -L$$PWD/src/lib/ -lCORE_RL_Magick++_
-win32: LIBS += -L$$PWD/src/lib/ -lCORE_RL_MagickCore_
+win32: LIBS += -L$$PWD/src/lib/win/x64 -lCORE_RL_Magick++_
+win32: LIBS += -L$$PWD/src/lib/win/x64 -lCORE_RL_MagickCore_
 
 unix:!macx: LIBS += -L/home/rozek/ImageMagickInstall/lib -lMagick++-7.Q16HDRI
 unix:!macx: LIBS += -L/home/rozek/ImageMagickInstall/lib -lMagickCore-7.Q16HDRI
-
 unix:!macx: INCLUDEPATH += /home/rozek/ImageMagickInstall/include/ImageMagick-7
 unix:!macx: DEPENDPATH += /home/rozek/ImageMagickInstall/include/ImageMagick-7
+
 INCLUDEPATH += $$PWD/src/include
 DEPENDPATH += $$PWD/src/include
 

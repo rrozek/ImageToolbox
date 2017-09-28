@@ -17,7 +17,6 @@ public:
 
 protected:
     void handleSource() override;
-    void collectImageInfo() override;
 
     void applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format) override;
 

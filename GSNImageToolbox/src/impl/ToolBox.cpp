@@ -2,6 +2,8 @@
 
 #include "Magick++.h"
 
+#include <QDir>
+
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -42,16 +44,23 @@ void ToolBox::setSource(const char *data, size_t size)
         qWarning() << "ImageMagick Exception: " << error.what();
         return;
     }
-    QJsonDocument jsonMetadata = QJsonDocument::fromRawData(jsonMetadataRaw.data(), jsonMetadataRaw.length());
+    QString jsonString = QString::fromLocal8Bit(static_cast<const char*>(jsonMetadataRaw.data()), jsonMetadataRaw.length());
+    QJsonParseError error;
+    QJsonDocument jsonMetadata = QJsonDocument::fromJson(jsonString.toUtf8(), &error);
     if (jsonMetadata.isNull())
     {
-        qWarning() << "invalid input json structure.";
+        qWarning() << "invalid input json structure. Error: " << error.errorString() << "at position: " << error.offset;
         return;
     }
     bool isMultiImage = false;
 
     if (jsonMetadata.isArray())
-        isMultiImage = true;
+    {
+        if (jsonMetadata.array().size() > 1)
+            isMultiImage = true;
+        else
+            isMultiImage = false;
+    }
     else if (jsonMetadata.isObject())
         isMultiImage = false;
     else
