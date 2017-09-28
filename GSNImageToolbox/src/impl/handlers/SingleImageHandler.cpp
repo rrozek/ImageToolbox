@@ -10,8 +10,8 @@ namespace GSNImageToolBox
 namespace handlers
 {
 
-SingleImageHandler::SingleImageHandler(Magick::Blob &blob)
-    : IHandler(blob)
+SingleImageHandler::SingleImageHandler(Magick::Blob &blob, const QJsonDocument &jsonImageInfo)
+    : IHandler(blob, jsonImageInfo)
 {
     qDebug() << "##### New source applied #####";
 }

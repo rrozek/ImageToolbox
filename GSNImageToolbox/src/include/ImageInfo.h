@@ -7,6 +7,7 @@
 
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QJsonDocument>
 
 namespace Magick
 {
@@ -18,7 +19,8 @@ namespace GSNImageToolBox
 class ImageInfo
 {
 public:
-    explicit ImageInfo(const QList<Magick::Image>& images);
+    explicit ImageInfo(const QJsonDocument& jsonMetadata);
+    ImageInfo(const QList<Magick::Image>& images);
     ImageInfo(const Magick::Image& image);
     ImageInfo(const ImageInfo& other);
     ImageInfo();

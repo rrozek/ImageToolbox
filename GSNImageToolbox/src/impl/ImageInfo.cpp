@@ -6,6 +6,10 @@
 namespace GSNImageToolBox
 {
 
+ImageInfo::ImageInfo(const QJsonDocument &jsonMetadata)
+{
+}
+
 ImageInfo::ImageInfo(const QList<Magick::Image> &images)
 {
     collectImageInfo(images);

@@ -73,12 +73,12 @@ void ToolBox::setSource(const char *data, size_t size)
 
     if (isMultiImage)
     {
-//        m_handler.reset(new handlers::MultiPageImageHandler(sourceBlob));
+//        m_handler.reset(new handlers::MultiPageImageHandler(sourceBlob, jsonMetadata));
         qWarning() << "multi image not supported yet";
         return;
     }
     else
-        m_handler.reset(new handlers::SingleImageHandler(sourceBlob));
+        m_handler.reset(new handlers::SingleImageHandler(sourceBlob, jsonMetadata));
 
     m_handler->init();
 }
