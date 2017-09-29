@@ -20,13 +20,11 @@ class ImageInfo
 {
 public:
     explicit ImageInfo(const QJsonDocument& jsonMetadata);
-    ImageInfo(const QList<Magick::Image>& images);
-    ImageInfo(const Magick::Image& image);
     ImageInfo(const ImageInfo& other);
     ImageInfo();
     ~ImageInfo();
 
-    void print() const;
+    void print(quint8 imageNumber = 0) const;
 
     bool isContainer() const;
     quint8 getImagesCount() const;
@@ -41,12 +39,7 @@ public:
 
     static ImageInfo invalid;
 private:
-
-    void collectImageInfo(const QList<Magick::Image>& images);
-    void collectImageInfo(const Magick::Image& image);
-
-    QList<std::shared_ptr<ImageInfo>> m_images;
-//    Exiv2::ExifData m_exif;
+    QJsonArray m_jsonMetadata;
     QSize m_thumbSize;
     QSize m_imageSize;
     quint8 m_bitsPerPixel;

@@ -8,25 +8,17 @@ namespace GSNImageToolBox
 
 ImageInfo::ImageInfo(const QJsonDocument &jsonMetadata)
 {
-}
-
-ImageInfo::ImageInfo(const QList<Magick::Image> &images)
-{
-    collectImageInfo(images);
-}
-
-ImageInfo::ImageInfo(const Magick::Image& image)
-{
-    collectImageInfo(image);
+    if (jsonMetadata.isArray())
+        m_jsonMetadata = jsonMetadata.array();
+    else if (jsonMetadata.isObject())
+        m_jsonMetadata.append(jsonMetadata.object());
+    else if (jsonMetadata.isEmpty() || jsonMetadata.isNull())
+        qWarning() << "Invalid metadata";
 }
 
 ImageInfo::ImageInfo(const ImageInfo &other)
 {
-    for ( std::shared_ptr<ImageInfo> info : other.m_images)
-    {
-        m_images.append(info);
-    }
-
+    m_jsonMetadata = other.m_jsonMetadata;
     m_thumbSize = other.m_thumbSize;
     m_imageSize = other.m_imageSize;
     m_bitsPerPixel = other.m_bitsPerPixel;
@@ -44,39 +36,36 @@ ImageInfo::~ImageInfo()
     m_images.clear();
 }
 
-void ImageInfo::print() const
+void ImageInfo::print(quint8 imageNumber) const
 {
-    if (isContainer())
+    if ( m_jsonMetadata.size() <= imageNumber )
     {
-        for ( std::shared_ptr<ImageInfo> info : m_images )
-            info->print();
+        qWarning() << "requested print info of image=" << imageNumber << "but only " << m_jsonMetadata.size() << "is avaliable";
+        return;
     }
-    else
-    {
-        qDebug() << "Image size: " << m_imageSize;
-        qDebug() << "Image format: " << m_format << "as string: " << common::EImageFormatString[m_format];
-        qDebug() << "Bits per pixel: " << m_bitsPerPixel;
-        qDebug() << "Colorspace: Comin soon.";
-    }
+    qDebug() << m_jsonMetadata[imageNumber];
 }
 
 bool ImageInfo::isContainer() const
 {
-    if (m_images.size() > 1)
+    if (m_jsonMetadata.size() > 1)
         return true;
     return false;
 }
 
 quint8 ImageInfo::getImagesCount() const
 {
-    return m_images.size();
+    return m_jsonMetadata.size();
 }
 
 const ImageInfo &ImageInfo::getImageInfo(quint8 imageNumber) const
 {
-    if ( m_images.size() <= imageNumber )
-        return ImageInfo();
-    return *m_images.at(imageNumber);
+    if ( m_jsonMetadata.size() <= imageNumber )
+    {
+        qWarning() << "requested info of image=" << imageNumber << "but only " << m_jsonMetadata.size() << "is avaliable";
+        return ImageInfo::invalid;
+    }
+    return
 }
 
 bool ImageInfo::hasThumbnail() const
