@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
     qDebug() << "data size: " << imgData.size();
     GSNImageToolBox::ToolBox toolbox;
     toolbox.setSource(imgData.data(), imgData.size());
+    return 0;
+
 //    toolbox.printImageInfo();
     // -------------------------------------------------------------------
 

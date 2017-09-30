@@ -75,18 +75,19 @@ char *SingleImageHandler::getImage(quint8 imageNumber, common::EImageFormat form
 
 void SingleImageHandler::handleSource()
 {
-    Magick::Image tmpImg;
-    tmpImg.verbose(true);
-    tmpImg.quiet(true);
-    tmpImg.ping(*m_sourceBlob);
-    qDebug() << "here...";
-    if (tmpImg.density().isValid())
-        qDebug() << "density: " << tmpImg.density().x() << "x" << tmpImg.density().y();
-    qDebug() << "BOOM!";
-    qDebug() << "resolution units: " << tmpImg.resolutionUnits();
-    qDebug() << "BOOM!!";
-    tmpImg.read(*m_sourceBlob);
-    m_sourceImage.reset(new Magick::Image(tmpImg));
+    // TODO: enable this
+//    Magick::Image tmpImg;
+//    tmpImg.verbose(true);
+//    tmpImg.quiet(true);
+//    tmpImg.ping(*m_sourceBlob);
+//    qDebug() << "here...";
+//    if (tmpImg.density().isValid())
+//        qDebug() << "density: " << tmpImg.density().x() << "x" << tmpImg.density().y();
+//    qDebug() << "BOOM!";
+//    qDebug() << "resolution units: " << tmpImg.resolutionUnits();
+//    qDebug() << "BOOM!!";
+//    tmpImg.read(*m_sourceBlob);
+//    m_sourceImage.reset(new Magick::Image(tmpImg));
 }
 
 void SingleImageHandler::applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format)

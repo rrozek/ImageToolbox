@@ -34,6 +34,7 @@ void ToolBox::setSource(const char *data, size_t size)
     Magick::Blob jsonMetadataRaw;
     try
     {
+        sourceImage.quiet(true);
         sourceImage.verbose(true);
         sourceImage.ping(sourceBlob);
         sourceImage.fileName("json:");
@@ -45,6 +46,14 @@ void ToolBox::setSource(const char *data, size_t size)
         return;
     }
     QString jsonString = QString::fromLocal8Bit(static_cast<const char*>(jsonMetadataRaw.data()), jsonMetadataRaw.length());
+    // ### HACK! just temporary for a single test file because imagemagick bug
+    jsonString = jsonString.replace("\"clipping path\": {", "\"clipping path\": ");
+    jsonString = jsonString.replace("</svg>\\n\"\n    },", "</svg>\\n\"\n    ,");
+    // ### HACK! just temporary for a single test file because imagemagick bug
+    QFile file("test.json");
+    file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    file.write(jsonString.toUtf8());
+    file.close();
     QJsonParseError error;
     QJsonDocument jsonMetadata = QJsonDocument::fromJson(jsonString.toUtf8(), &error);
     if (jsonMetadata.isNull())
@@ -81,6 +90,7 @@ void ToolBox::setSource(const char *data, size_t size)
         m_handler.reset(new handlers::SingleImageHandler(sourceBlob, jsonMetadata));
 
     m_handler->init();
+    m_handler->printImageInfo();
 }
 
 void ToolBox::getImage(common::EImageFormat format, QByteArray& dataArray)

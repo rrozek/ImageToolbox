@@ -3,93 +3,94 @@
 #include <QDebug>
 #include "Magick++.h"
 
+#include "src/impl/jsonObjects/JsonObjectRoot.h"
+
 namespace GSNImageToolBox
 {
 
-ImageInfo::ImageInfo(const QJsonDocument &jsonMetadata)
+ImageInfo::ImageInfo(QObject *parent)
+    : m_rootItem(new JsonObjectRoot(Q_NULLPTR))
 {
-    if (jsonMetadata.isArray())
-        m_jsonMetadata = jsonMetadata.array();
-    else if (jsonMetadata.isObject())
-        m_jsonMetadata.append(jsonMetadata.object());
-    else if (jsonMetadata.isEmpty() || jsonMetadata.isNull())
-        qWarning() << "Invalid metadata";
-}
-
-ImageInfo::ImageInfo(const ImageInfo &other)
-{
-    m_jsonMetadata = other.m_jsonMetadata;
-    m_thumbSize = other.m_thumbSize;
-    m_imageSize = other.m_imageSize;
-    m_bitsPerPixel = other.m_bitsPerPixel;
-    m_colorSpace = other.m_colorSpace;
-    m_format = other.m_format;
-}
-
-ImageInfo::ImageInfo()
-{
-
 }
 
 ImageInfo::~ImageInfo()
 {
-    m_images.clear();
 }
 
-void ImageInfo::print(quint8 imageNumber) const
+//! Loads JSON from \a json bytearray into model
+bool ImageInfo::loadJson(const QByteArray &json)
 {
-    if ( m_jsonMetadata.size() <= imageNumber )
+    return loadJson(QJsonDocument::fromJson(json));
+}
+
+//! Loads JSON from \a jsonDoc document into model
+bool ImageInfo::loadJson(const QJsonDocument &jsonDoc)
+{
+    m_document = jsonDoc;
+    if (!m_document.isNull())
     {
-        qWarning() << "requested print info of image=" << imageNumber << "but only " << m_jsonMetadata.size() << "is avaliable";
-        return;
-    }
-    qDebug() << m_jsonMetadata[imageNumber];
-}
-
-bool ImageInfo::isContainer() const
-{
-    if (m_jsonMetadata.size() > 1)
+        if (m_rootItem != Q_NULLPTR)
+            delete m_rootItem;
+        m_rootItem = new JsonObjectRoot(Q_NULLPTR);
+        if (m_document.isArray()) {
+            m_rootItem->deserialize(QJsonValue(m_document.array()));
+            m_rootItem->setType(QJsonValue::Array);
+        } else {
+            m_rootItem->deserialize(QJsonValue(m_document.object()));
+            m_rootItem->setType(QJsonValue::Object);
+        }
         return true;
+    }
+
+    qDebug()<< "cannot load json";
     return false;
 }
 
-quint8 ImageInfo::getImagesCount() const
+//! Dumps model data into \a jsonObject
+bool ImageInfo::dumpTo(QJsonObject &jsonObject) const
 {
-    return m_jsonMetadata.size();
+    jsonObject = dump().toObject();
+    return true;
 }
 
-const ImageInfo &ImageInfo::getImageInfo(quint8 imageNumber) const
+//! Dumps model data into \a jsonArray
+bool ImageInfo::dumpTo(QJsonArray &jsonArray) const
 {
-    if ( m_jsonMetadata.size() <= imageNumber )
+    jsonArray = dump().toArray();
+    return true;
+}
+
+//! Dumps model data into \a jsonDocument
+bool ImageInfo::dumpTo(QJsonDocument &jsonDocument) const
+{
+    jsonDocument = QJsonDocument(dump().toObject());
+    return true;
+}
+
+//! Dumps model data into \a byteArray
+bool ImageInfo::dumpTo(QByteArray &byteArray) const
+{
+    byteArray.clear();
+    QJsonDocument doc;
+    if (dumpTo(doc))
     {
-        qWarning() << "requested info of image=" << imageNumber << "but only " << m_jsonMetadata.size() << "is avaliable";
-        return ImageInfo::invalid;
+        byteArray = doc.toBinaryData();
+        return true;
     }
-    return
-}
-
-bool ImageInfo::hasThumbnail() const
-{
     return false;
 }
 
-void ImageInfo::collectImageInfo(const QList<Magick::Image> &images)
+//! Dumps model data into new QJsonValue
+QJsonValue ImageInfo::dump() const
 {
-    for ( const Magick::Image& image : images)
-    {
-        m_images.append(std::shared_ptr<ImageInfo>(new ImageInfo(image)));
-    }
+    qDebug() << Q_FUNC_INFO;
+    return m_rootItem->serialize();
 }
 
-void ImageInfo::collectImageInfo(const Magick::Image &image)
+void ImageInfo::print(int /*imageNumber*/) const
 {
-    m_imageSize.setWidth(image.baseColumns());
-    m_imageSize.setHeight(image.baseRows());
-
-    m_format = common::EImageFormatFromString(QString::fromStdString(image.magick()));
-
-    m_bitsPerPixel = image.depth();
-    // TODO: COLORSPACE
+    qDebug() << Q_FUNC_INFO;
+    m_rootItem->printPaths();
 }
 
 } // namespace GSNImageToolBox

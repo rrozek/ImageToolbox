@@ -30,7 +30,16 @@ SOURCES += \
     src/impl/converter/Tiff2PngConverter.cpp \
     src/impl/handlers/MultiPageImageHandler.cpp \
     src/impl/handlers/SingleImageHandler.cpp \
-    src/impl/handlers/IHandler.cpp
+    src/impl/handlers/IHandler.cpp \
+    src/impl/converter/IConverter.cpp \
+    src/impl/converter/Tiff2PngConverter.cpp \
+    src/impl/handlers/IHandler.cpp \
+    src/impl/handlers/MultiPageImageHandler.cpp \
+    src/impl/handlers/SingleImageHandler.cpp \
+    src/impl/jsonObjects/JsonObjectBase.cpp \
+    src/impl/jsonObjects/JsonObjectRoot.cpp \
+    src/impl/ImageInfo.cpp \
+    src/impl/ToolBox.cpp
 
 
 HEADERS += \
@@ -42,7 +51,15 @@ HEADERS += \
     src/impl/converter/Tiff2PngConverter.h \
     src/impl/handlers/IHandler.h \
     src/impl/handlers/MultiPageImageHandler.h \
-    src/impl/handlers/SingleImageHandler.h
+    src/impl/handlers/SingleImageHandler.h \
+    src/impl/converter/IConverter.h \
+    src/impl/converter/Tiff2PngConverter.h \
+    src/impl/handlers/IHandler.h \
+    src/impl/handlers/MultiPageImageHandler.h \
+    src/impl/handlers/SingleImageHandler.h \
+    src/impl/jsonObjects/JsonFields.h \
+    src/impl/jsonObjects/JsonObjectBase.h \
+    src/impl/jsonObjects/JsonObjectRoot.h
 
 unix {
     target.path = /usr/lib

@@ -2,12 +2,16 @@
 
 #include <QSize>
 #include <QList>
+#include <QVector>
+#include <QObject>
+
+
 #include "Common.h"
 #include <memory>
 
-#include <QJsonObject>
-#include <QJsonArray>
 #include <QJsonDocument>
+
+class JsonObjectRoot;
 
 namespace Magick
 {
@@ -16,36 +20,34 @@ class Image;
 
 namespace GSNImageToolBox
 {
-class ImageInfo
+class ImageInfo : public QObject
 {
 public:
-    explicit ImageInfo(const QJsonDocument& jsonMetadata);
-    ImageInfo(const ImageInfo& other);
-    ImageInfo();
+    explicit ImageInfo(QObject* parent = Q_NULLPTR);
     ~ImageInfo();
 
-    void print(quint8 imageNumber = 0) const;
+    bool loadJson(const QByteArray& json);
+    bool loadJson(const QJsonDocument& jsonDoc);
 
-    bool isContainer() const;
-    quint8 getImagesCount() const;
-    const ImageInfo& getImageInfo(quint8 imageNumber = 0) const;
-    bool hasThumbnail() const;
+    bool dumpTo(QJsonObject &jsonObject) const;
+    bool dumpTo(QJsonArray &jsonArray) const;
+    bool dumpTo(QJsonDocument &jsonDocument) const;
+    bool dumpTo(QByteArray &byteArray) const;
 
-    const QSize& getThumbSize() const { return m_thumbSize; }
-    const QSize& getImageSize() const { return m_imageSize; }
-    quint8 getBitsPerPixel() const { return m_bitsPerPixel; }
-    common::EColorSpace getColorSpace() const { return m_colorSpace; }
-    common::EImageFormat getImageFormat() const { return m_format; }
+    void print(int imageNumber = -1) const;
 
-    static ImageInfo invalid;
+//    bool isContainer() const;
+//    quint8 getImagesCount() const;
+//    const ImageInfo& getImageInfo(quint8 imageNumber = 0) const;
+
 private:
-    QJsonArray m_jsonMetadata;
-    QSize m_thumbSize;
-    QSize m_imageSize;
-    quint8 m_bitsPerPixel;
-    common::EColorSpace m_colorSpace;
-    common::EImageFormat m_format;
+    QJsonValue dump() const;
+
+    JsonObjectRoot* m_rootItem;
+    QJsonDocument m_document;
+
 };
 
 } // namespace GSNImageToolBox
+
 
