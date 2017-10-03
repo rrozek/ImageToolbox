@@ -5,7 +5,7 @@ namespace GSNImageToolBox
 namespace handlers
 {
 
-MultiPageImageHandler::MultiPageImageHandler(Magick::Blob &blob, const QJsonDocument &jsonImageInfo)
+MultiPageImageHandler::MultiPageImageHandler(std::shared_ptr<Magick::Blob> blob, const QJsonDocument &jsonImageInfo)
     : IHandler(blob, jsonImageInfo)
 {
 

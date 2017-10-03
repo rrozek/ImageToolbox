@@ -9,7 +9,7 @@ QT       -= gui
 TARGET = GSNImageToolbox
 TEMPLATE = lib
 
-CONFIG += c++11
+CONFIG += c++11 c++14
 DEFINES += GSNIMAGETOOLBOX_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
@@ -31,15 +31,8 @@ SOURCES += \
     src/impl/handlers/MultiPageImageHandler.cpp \
     src/impl/handlers/SingleImageHandler.cpp \
     src/impl/handlers/IHandler.cpp \
-    src/impl/converter/IConverter.cpp \
-    src/impl/converter/Tiff2PngConverter.cpp \
-    src/impl/handlers/IHandler.cpp \
-    src/impl/handlers/MultiPageImageHandler.cpp \
-    src/impl/handlers/SingleImageHandler.cpp \
     src/impl/jsonObjects/JsonObjectBase.cpp \
-    src/impl/jsonObjects/JsonObjectRoot.cpp \
-    src/impl/ImageInfo.cpp \
-    src/impl/ToolBox.cpp
+    src/impl/jsonObjects/JsonObjectRoot.cpp
 
 
 HEADERS += \
@@ -47,11 +40,6 @@ HEADERS += \
     src/include/gsnimagetoolbox_global.h \
     src/include/ImageInfo.h \
     src/include/Common.h \
-    src/impl/converter/IConverter.h \
-    src/impl/converter/Tiff2PngConverter.h \
-    src/impl/handlers/IHandler.h \
-    src/impl/handlers/MultiPageImageHandler.h \
-    src/impl/handlers/SingleImageHandler.h \
     src/impl/converter/IConverter.h \
     src/impl/converter/Tiff2PngConverter.h \
     src/impl/handlers/IHandler.h \

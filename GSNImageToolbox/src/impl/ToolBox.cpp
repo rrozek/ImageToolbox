@@ -22,13 +22,13 @@ ToolBox::ToolBox()
 
 ToolBox::~ToolBox()
 {
-
+    qDebug() << Q_FUNC_INFO;
 }
 
 void ToolBox::setSource(const char *data, size_t size)
 {
     qDebug() << "##### applying new source... #####";
-    Magick::Blob sourceBlob(data, size);
+    auto sourceBlob = std::make_shared<Magick::Blob>(data, size);
 
     Magick::Image sourceImage;
     Magick::Blob jsonMetadataRaw;
@@ -36,7 +36,7 @@ void ToolBox::setSource(const char *data, size_t size)
     {
         sourceImage.quiet(true);
         sourceImage.verbose(true);
-        sourceImage.ping(sourceBlob);
+        sourceImage.ping(*sourceBlob);
         sourceImage.fileName("json:");
         sourceImage.write(&jsonMetadataRaw);
     }
@@ -81,8 +81,9 @@ void ToolBox::setSource(const char *data, size_t size)
     }
     else
         m_handler.reset(new handlers::SingleImageHandler(sourceBlob, jsonMetadata));
-
+    qDebug() << "goto init";
     m_handler->init();
+    qDebug() << "goto printImageInfo";
     m_handler->printImageInfo();
 }
 

@@ -10,10 +10,15 @@ namespace GSNImageToolBox
 namespace handlers
 {
 
-SingleImageHandler::SingleImageHandler(Magick::Blob &blob, const QJsonDocument &jsonImageInfo)
+SingleImageHandler::SingleImageHandler(std::shared_ptr<Magick::Blob> blob, const QJsonDocument &jsonImageInfo)
     : IHandler(blob, jsonImageInfo)
 {
     qDebug() << "##### New source applied #####";
+}
+
+SingleImageHandler::~SingleImageHandler()
+{
+    qDebug() << Q_FUNC_INFO;
 }
 
 quint8 SingleImageHandler::getImageCount() const
@@ -75,9 +80,25 @@ char *SingleImageHandler::getImage(quint8 imageNumber, common::EImageFormat form
 
 void SingleImageHandler::handleSource()
 {
-    m_sourceImage = std::make_unique<Magick::Image>();
-    m_sourceImage->density(Magick::Point(m_imageInfo->getValue("root[0].image.resolution.x").toInt(),m_imageInfo->getValue("root[0].image.resolution.y").toInt()));
-    m_sourceImage->read(*m_sourceBlob.get());
+    try
+    {
+        m_sourceImage = std::make_unique<Magick::Image>();
+        qDebug() << m_sourceImage->density().x() << m_sourceImage->density().y();
+        qDebug() << m_imageInfo->getValue("root[0].image.resolution.x").toInt();
+        qDebug() << m_imageInfo->getValue("root[0].image.resolution.y").toInt();
+        m_sourceImage->density(Magick::Point(m_imageInfo->getValue("root[0].image.resolution.x").toInt(),m_imageInfo->getValue("root[0].image.resolution.y").toInt()));
+        qDebug() << m_sourceImage->density().x() << m_sourceImage->density().y();
+        qDebug() << m_sourceImage->geometry().width() << m_sourceImage->geometry().height();
+        m_sourceImage->read(*m_sourceBlob);
+        qDebug() << "abc";
+        m_sourceImage->write("dupa.png");
+        qDebug() << "def";
+    }
+    catch( ... )
+    {
+        qWarning() << Q_FUNC_INFO << "caught ImageMagick exception";
+//        qWarning() << error.what();
+    }
 }
 
 void SingleImageHandler::applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format)

@@ -26,7 +26,7 @@ bool ImageInfo::loadJson(const QByteArray &json)
 //! Loads JSON from \a jsonDoc document into model
 bool ImageInfo::loadJson(const QJsonDocument &jsonDoc)
 {
-    m_document = jsonDoc;
+    m_document = QJsonDocument(jsonDoc);
     if (!m_document.isNull())
     {
         if (m_rootItem != Q_NULLPTR)
@@ -91,6 +91,7 @@ QVariant ImageInfo::getValue(const QString &propertyKey) const
     JsonObjectBase* obj = m_rootItem->getObjectByPath(propertyKey);
     if (obj == Q_NULLPTR)
         return QVariant();
+    qDebug() << "key value pair: " << obj->key() << obj->value().toVariant();
     return obj->value().toVariant();
 }
 

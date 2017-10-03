@@ -9,8 +9,8 @@ namespace GSNImageToolBox
 namespace handlers
 {
 
-IHandler::IHandler(Magick::Blob& blob, const QJsonDocument &jsonImageInfo)
-    : m_sourceBlob(std::make_shared<Magick::Blob>(blob))
+IHandler::IHandler(std::shared_ptr<Magick::Blob> blob, const QJsonDocument &jsonImageInfo)
+    : m_sourceBlob(blob)
     , m_imageInfo(std::make_unique<ImageInfo>())
 {
     m_imageInfo->loadJson(jsonImageInfo);
@@ -18,7 +18,7 @@ IHandler::IHandler(Magick::Blob& blob, const QJsonDocument &jsonImageInfo)
 
 IHandler::~IHandler()
 {
-
+    qDebug() << Q_FUNC_INFO;
 }
 
 void IHandler::init()
@@ -28,6 +28,11 @@ void IHandler::init()
 
 void IHandler::printImageInfo() const
 {
+    if (m_imageInfo == nullptr)
+    {
+        qWarning() << Q_FUNC_INFO << "image info uninitialized";
+        return;
+    }
     m_imageInfo->print();
 }
 

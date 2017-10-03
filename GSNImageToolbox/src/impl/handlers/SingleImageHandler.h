@@ -10,8 +10,8 @@ namespace handlers
 class SingleImageHandler : public IHandler
 {
 public:
-    SingleImageHandler(Magick::Blob &blob, const QJsonDocument& jsonImageInfo);
-
+    SingleImageHandler(std::shared_ptr<Magick::Blob> blob, const QJsonDocument& jsonImageInfo);
+    ~SingleImageHandler();
     quint8 getImageCount() const override;
     char* getImage(quint8 imageNumber, common::EImageFormat format, size_t &dataSize) override;
 
