@@ -34,6 +34,10 @@ public:
     bool dumpTo(QJsonDocument &jsonDocument) const;
     bool dumpTo(QByteArray &byteArray) const;
 
+    QStringList getAvailableProperties(const QString& regexPattern) const;
+    QVariant getValue(const QString& propertyKey) const;
+    bool setValue(const QString& key, const QVariant& value);
+
     void print(int imageNumber = -1) const;
 
 //    bool isContainer() const;

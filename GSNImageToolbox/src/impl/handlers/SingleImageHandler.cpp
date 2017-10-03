@@ -75,19 +75,9 @@ char *SingleImageHandler::getImage(quint8 imageNumber, common::EImageFormat form
 
 void SingleImageHandler::handleSource()
 {
-    // TODO: enable this
-//    Magick::Image tmpImg;
-//    tmpImg.verbose(true);
-//    tmpImg.quiet(true);
-//    tmpImg.ping(*m_sourceBlob);
-//    qDebug() << "here...";
-//    if (tmpImg.density().isValid())
-//        qDebug() << "density: " << tmpImg.density().x() << "x" << tmpImg.density().y();
-//    qDebug() << "BOOM!";
-//    qDebug() << "resolution units: " << tmpImg.resolutionUnits();
-//    qDebug() << "BOOM!!";
-//    tmpImg.read(*m_sourceBlob);
-//    m_sourceImage.reset(new Magick::Image(tmpImg));
+    m_sourceImage = std::make_unique<Magick::Image>();
+    m_sourceImage->density(Magick::Point(m_imageInfo->getValue("root[0].image.resolution.x").toInt(),m_imageInfo->getValue("root[0].image.resolution.y").toInt()));
+    m_sourceImage->read(*m_sourceBlob.get());
 }
 
 void SingleImageHandler::applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format)

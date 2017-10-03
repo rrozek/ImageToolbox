@@ -46,14 +46,6 @@ void ToolBox::setSource(const char *data, size_t size)
         return;
     }
     QString jsonString = QString::fromLocal8Bit(static_cast<const char*>(jsonMetadataRaw.data()), jsonMetadataRaw.length());
-    // ### HACK! just temporary for a single test file because imagemagick bug
-    jsonString = jsonString.replace("\"clipping path\": {", "\"clipping path\": ");
-    jsonString = jsonString.replace("</svg>\\n\"\n    },", "</svg>\\n\"\n    ,");
-    // ### HACK! just temporary for a single test file because imagemagick bug
-    QFile file("test.json");
-    file.open(QIODevice::WriteOnly | QIODevice::Truncate);
-    file.write(jsonString.toUtf8());
-    file.close();
     QJsonParseError error;
     QJsonDocument jsonMetadata = QJsonDocument::fromJson(jsonString.toUtf8(), &error);
     if (jsonMetadata.isNull())
@@ -82,6 +74,7 @@ void ToolBox::setSource(const char *data, size_t size)
 
     if (isMultiImage)
     {
+        // TODO: Mikopson will do that
 //        m_handler.reset(new handlers::MultiPageImageHandler(sourceBlob, jsonMetadata));
         qWarning() << "multi image not supported yet";
         return;

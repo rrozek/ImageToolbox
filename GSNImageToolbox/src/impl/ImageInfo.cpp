@@ -80,6 +80,26 @@ bool ImageInfo::dumpTo(QByteArray &byteArray) const
     return false;
 }
 
+QStringList ImageInfo::getAvailableProperties(const QString &regexPattern) const
+{
+    QStringList properties;
+    return properties;
+}
+
+QVariant ImageInfo::getValue(const QString &propertyKey) const
+{
+    JsonObjectBase* obj = m_rootItem->getObjectByPath(propertyKey);
+    if (obj == Q_NULLPTR)
+        return QVariant();
+    return obj->value().toVariant();
+}
+
+bool ImageInfo::setValue(const QString &key, const QVariant &value)
+{
+
+    return true;
+}
+
 //! Dumps model data into new QJsonValue
 QJsonValue ImageInfo::dump() const
 {
