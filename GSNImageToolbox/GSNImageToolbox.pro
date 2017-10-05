@@ -26,8 +26,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     src/impl/ToolBox.cpp \
     src/impl/ImageInfo.cpp \
-    src/impl/converter/IConverter.cpp \
-    src/impl/converter/Tiff2PngConverter.cpp \
     src/impl/handlers/MultiPageImageHandler.cpp \
     src/impl/handlers/SingleImageHandler.cpp \
     src/impl/handlers/IHandler.cpp \
@@ -40,8 +38,6 @@ HEADERS += \
     src/include/gsnimagetoolbox_global.h \
     src/include/ImageInfo.h \
     src/include/Common.h \
-    src/impl/converter/IConverter.h \
-    src/impl/converter/Tiff2PngConverter.h \
     src/impl/handlers/IHandler.h \
     src/impl/handlers/MultiPageImageHandler.h \
     src/impl/handlers/SingleImageHandler.h \

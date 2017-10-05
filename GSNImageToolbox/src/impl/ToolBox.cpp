@@ -15,19 +15,23 @@
 namespace GSNImageToolBox
 {
 
+bool ToolBox::magickInitialized = false;
+
 ToolBox::ToolBox()
 {
-    Magick::InitializeMagick(QDir::currentPath().toStdString().c_str());
+    if (!magickInitialized)
+    {
+        Magick::InitializeMagick(QDir::currentPath().toStdString().c_str());
+        magickInitialized = true;
+    }
 }
 
 ToolBox::~ToolBox()
 {
-    qDebug() << Q_FUNC_INFO;
 }
 
 void ToolBox::setSource(const char *data, size_t size)
 {
-    qDebug() << "##### applying new source... #####";
     auto sourceBlob = std::make_shared<Magick::Blob>(data, size);
 
     Magick::Image sourceImage;
@@ -70,8 +74,6 @@ void ToolBox::setSource(const char *data, size_t size)
         return;
     }
 
-    qDebug() << "final verdict - is multi-image: " << isMultiImage;
-
     if (isMultiImage)
     {
         // TODO: Mikopson will do that
@@ -81,10 +83,12 @@ void ToolBox::setSource(const char *data, size_t size)
     }
     else
         m_handler.reset(new handlers::SingleImageHandler(sourceBlob, jsonMetadata));
-    qDebug() << "goto init";
     m_handler->init();
-    qDebug() << "goto printImageInfo";
-    m_handler->printImageInfo();
+}
+
+void ToolBox::getMetadataJSON(QByteArray &jsonMetaData) const
+{
+    m_handler->getImageInfo().dumpTo(jsonMetaData);
 }
 
 void ToolBox::getImage(common::EImageFormat format, QByteArray& dataArray)

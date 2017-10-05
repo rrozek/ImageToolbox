@@ -13,12 +13,10 @@ namespace handlers
 SingleImageHandler::SingleImageHandler(std::shared_ptr<Magick::Blob> blob, const QJsonDocument &jsonImageInfo)
     : IHandler(blob, jsonImageInfo)
 {
-    qDebug() << "##### New source applied #####";
 }
 
 SingleImageHandler::~SingleImageHandler()
 {
-    qDebug() << Q_FUNC_INFO;
 }
 
 quint8 SingleImageHandler::getImageCount() const
@@ -60,15 +58,12 @@ void SingleImageHandler::handleSource()
     try
     {
         m_sourceImage = std::make_unique<Magick::Image>();
+        m_sourceImage->quiet(true);
         m_sourceImage->density(Magick::Point(m_imageInfo->getValue("root[0].image.resolution.x").toInt(),m_imageInfo->getValue("root[0].image.resolution.y").toInt()));
-        m_sourceImage->read(*m_sourceBlob, Magick::Geometry(m_imageInfo->getValue("root[0].image.geometry.width").toInt(),
-                                                            m_imageInfo->getValue("root[0].image.geometry.height").toInt(),
-                                                            m_imageInfo->getValue("root[0].image.geometry.x").toInt(),
-                                                            m_imageInfo->getValue("root[0].image.geometry.y").toInt()
-                                                            ), m_imageInfo->getValue("root[0].image.deptrh").toInt()
-                            );
+        m_sourceImage->read(*m_sourceBlob);
+        m_sourceImage->quiet(true);
     }
-    catch( Magick::Exception &error)
+    catch( Magick::Error &error)
     {
         qWarning() << Q_FUNC_INFO << "caught ImageMagick exception";
         qWarning() << error.what();
@@ -82,16 +77,16 @@ void SingleImageHandler::applyMaskFromClippingPath(Magick::Image &image, common:
         QVariant clipPath = m_imageInfo->getValue("root[0].image.clipping path");
         if (clipPath.isValid())
         {
-        image.alphaChannel(MagickCore::TransparentAlphaChannel);
-        image.clip();
-        image.alphaChannel(MagickCore::OpaqueAlphaChannel);
+            image.alphaChannel(Magick::TransparentAlphaChannel);
+            image.clip();
+            image.alphaChannel(Magick::OpaqueAlphaChannel);
         }
         else
             qDebug() << "no clip path present.";
 
         image.magick(common::EImageFormatString[format]);
     }
-    catch( Magick::Exception &error)
+    catch( Magick::Error &error)
     {
         qWarning() << Q_FUNC_INFO << "caught ImageMagick exception";
         qWarning() << error.what();

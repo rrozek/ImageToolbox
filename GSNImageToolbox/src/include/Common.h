@@ -30,6 +30,13 @@ static const char* EImageFormatString[] =
 , "jpeg"
 };
 
+static const char* EImageFormatStringCapital[] =
+{ "Tiff"
+, "Png"
+, "Eps"
+, "Jpeg"
+};
+
 static_assert(sizeof(GSNImageToolBox::common::EImageFormatString) / sizeof(char*) == GSNImageToolBox::common::COUNT
               , "EImageFormat and EImageFormatString don't match. Did you forget to specify string representation of new enum?");
 

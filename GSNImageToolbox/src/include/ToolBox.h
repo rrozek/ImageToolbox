@@ -34,6 +34,8 @@ public:
 
     void setSource(const char* data, size_t size);
 
+    void getMetadataJSON(QByteArray& jsonMetaData) const;
+
     void getImage(common::EImageFormat format, QByteArray &dataArray);
     void getImage(quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray);
 
@@ -45,10 +47,12 @@ public:
     void printImageInfo();
     const ImageInfo& getImageInfo() const;
 
+
 private:
     bool applyMaskFromClippingPath(Magick::Image& manipulatedImg, common::EImageFormat format);
-
     std::unique_ptr<handlers::IHandler> m_handler;
+
+    static bool magickInitialized;
 };
 
 } // namespace GSNImageToolBox

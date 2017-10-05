@@ -18,7 +18,6 @@ IHandler::IHandler(std::shared_ptr<Magick::Blob> blob, const QJsonDocument &json
 
 IHandler::~IHandler()
 {
-    qDebug() << Q_FUNC_INFO;
 }
 
 void IHandler::init()

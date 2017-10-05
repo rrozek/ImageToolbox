@@ -34,7 +34,7 @@ public:
     bool dumpTo(QJsonDocument &jsonDocument) const;
     bool dumpTo(QByteArray &byteArray) const;
 
-    QStringList getAvailableProperties(const QString& regexPattern) const;
+    QStringList getAvailableProperties(const QString pattern = QString::null) const;
     QVariant getValue(const QString& propertyKey) const;
     bool setValue(const QString& key, const QVariant& value);
 

@@ -63,7 +63,16 @@ bool ImageInfo::dumpTo(QJsonArray &jsonArray) const
 //! Dumps model data into \a jsonDocument
 bool ImageInfo::dumpTo(QJsonDocument &jsonDocument) const
 {
-    jsonDocument = QJsonDocument(dump().toObject());
+    QJsonValue dumpedVal = dump();
+    if (dumpedVal.isObject())
+        jsonDocument = QJsonDocument(dumpedVal.toObject());
+    else if (dumpedVal.isArray())
+        jsonDocument = QJsonDocument(dumpedVal.toArray());
+    else
+    {
+        qWarning() << "Failed to dump json.";
+        return false;
+    }
     return true;
 }
 
@@ -74,15 +83,16 @@ bool ImageInfo::dumpTo(QByteArray &byteArray) const
     QJsonDocument doc;
     if (dumpTo(doc))
     {
-        byteArray = doc.toBinaryData();
+        byteArray = doc.toJson();
         return true;
     }
     return false;
 }
 
-QStringList ImageInfo::getAvailableProperties(const QString &regexPattern) const
+QStringList ImageInfo::getAvailableProperties(const QString pattern) const
 {
     QStringList properties;
+//    m_rootItem->getObjectByPath()
     return properties;
 }
 
@@ -90,8 +100,10 @@ QVariant ImageInfo::getValue(const QString &propertyKey) const
 {
     JsonObjectBase* obj = m_rootItem->getObjectByPath(propertyKey);
     if (obj == Q_NULLPTR)
+    {
+        qDebug() << "property with key: " << propertyKey << "not found in metadata";
         return QVariant();
-    qDebug() << "key value pair: " << obj->key() << obj->value().toVariant();
+    }
     return obj->value().toVariant();
 }
 
