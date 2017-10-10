@@ -25,34 +25,48 @@ class Image;
 namespace GSNImageToolBox
 {
 
+
 class GSNIMAGETOOLBOXSHARED_EXPORT ToolBox
 {
 
 public:
+    static void InitializeMagickEnvironment();
+
     ToolBox();
     ~ToolBox();
 
-    void setSource(const char* data, size_t size);
+    void setSource(const QString& absFilePath);
+//    void setSource(const char* data, size_t size); // deprecated due to performace issues
 
     void getMetadataJSON(QByteArray& jsonMetaData) const;
 
     void getImage(common::EImageFormat format, QByteArray &dataArray);
     void getImage(quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray);
-
     char* getImage(common::EImageFormat format, size_t &dataSize);
     char* getImage(quint8 imageNumber, common::EImageFormat format, size_t &dataSize);
+
+    void getThumbnail(float thumbPercentSize, common::EImageFormat format, QByteArray &dataArray);
+    void getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray);
+    char* getThumbnail(float thumbPercentSize, common::EImageFormat format, size_t &dataSize);
+    char* getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, size_t &dataSize);
+    void getThumbnail(quint32 cropToWidth, quint32 cropToHeight, common::EImageFormat format, QByteArray &dataArray);
+    void getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray);
+    char* getThumbnail(quint32 cropToWidth, quint32 cropToHeight, common::EImageFormat format, size_t &dataSize);
+    char* getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, size_t &dataSize);
 
     quint8 getImageCount() const;
 
     void printImageInfo();
     const ImageInfo& getImageInfo() const;
 
+    static bool magickInitialized;
 
 private:
+    bool readFile(const QString& absFilePath, QByteArray& targetDataArray);
     bool applyMaskFromClippingPath(Magick::Image& manipulatedImg, common::EImageFormat format);
+
     std::unique_ptr<handlers::IHandler> m_handler;
 
-    static bool magickInitialized;
 };
 
 } // namespace GSNImageToolBox

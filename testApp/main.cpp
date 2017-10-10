@@ -18,6 +18,9 @@ void Eps2Png(const QFileInfo& info);
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    GSNImageToolBox::ToolBox::InitializeMagickEnvironment();
+
+
     QStringList params = a.arguments();
     if (params.size() != 2)
     {
@@ -32,6 +35,11 @@ int main(int argc, char *argv[])
         return -2;
     }
 
+    usedDir.mkdir("Tiff2Png");
+    usedDir.mkdir("Tiff2Eps");
+    usedDir.mkdir("Tiff2Eps2Png");
+    usedDir.mkdir("Eps2Png");
+
     usedDir.setFilter(QDir::Files | QDir::Readable);
     QStringList fileFilters;
     fileFilters << "*.tif";
@@ -40,9 +48,6 @@ int main(int argc, char *argv[])
     fileFilters << "*.TIFF";
     QFileInfoList sourceTifFiles = usedDir.entryInfoList(fileFilters);
 
-    usedDir.mkdir("Tiff2Png");
-    usedDir.mkdir("Tiff2Eps");
-    usedDir.mkdir("Tiff2Eps2Png");
     for ( QFileInfo info : sourceTifFiles )
     {
         Tiff2Png(info);
@@ -56,7 +61,6 @@ int main(int argc, char *argv[])
     fileFilters << "*.EPS";
     QFileInfoList sourceEpsFiles = usedDir.entryInfoList(fileFilters);
 
-    usedDir.mkdir("Eps2Png");
     for ( QFileInfo info : sourceEpsFiles )
     {
         Eps2Png(info);
@@ -98,11 +102,7 @@ void writeFile(const QString& absFilePath, const QByteArray& result)
 void processFile(const QFileInfo& info, GSNImageToolBox::common::EImageFormat format)
 {
     GSNImageToolBox::ToolBox toolbox;
-
-    QByteArray data;
-    readFile(info.absoluteFilePath(), data);
-
-    toolbox.setSource(data.data(), data.length());
+    toolbox.setSource(info.absoluteFilePath());
 
     QByteArray metadata;
     toolbox.getMetadataJSON(metadata);
@@ -122,7 +122,6 @@ void processFile(const QFileInfo& info, GSNImageToolBox::common::EImageFormat fo
     subdir.append("/");
 
     writeFile(info.absoluteDir().absolutePath() + subdir + info.baseName() + "." + QString(GSNImageToolBox::common::EImageFormatString[format]), result);
-
 }
 
 void Tiff2Png(const QFileInfo& info)
@@ -139,16 +138,13 @@ void Tiff2Eps2Png(const QFileInfo& info)
 {
     GSNImageToolBox::ToolBox toolbox;
 
-    QByteArray data;
-    readFile(info.absoluteFilePath(), data);
-
-    toolbox.setSource(data.data(), data.length());
+    toolbox.setSource(info.absoluteFilePath());
 
     QByteArray result;
-
     toolbox.getImage(GSNImageToolBox::common::EPS, result);
+    writeFile(info.absoluteDir().absolutePath() + "/Tiff2Eps2Png/" + info.baseName() + "." + GSNImageToolBox::common::EImageFormatString[GSNImageToolBox::common::EPS], result);
 
-    toolbox.setSource(result.data(), result.length());
+    toolbox.setSource(info.absoluteDir().absolutePath() + "/Tiff2Eps2Png/" + info.baseName() + "." + GSNImageToolBox::common::EImageFormatString[GSNImageToolBox::common::EPS]);
 
     QByteArray finalResult;
     toolbox.getImage(GSNImageToolBox::common::PNG, finalResult);

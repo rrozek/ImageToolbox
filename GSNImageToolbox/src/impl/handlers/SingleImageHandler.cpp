@@ -60,7 +60,21 @@ void SingleImageHandler::handleSource()
         m_sourceImage = std::make_unique<Magick::Image>();
         m_sourceImage->quiet(true);
         m_sourceImage->density(Magick::Point(m_imageInfo->getValue("root[0].image.resolution.x").toInt(),m_imageInfo->getValue("root[0].image.resolution.y").toInt()));
-        m_sourceImage->read(*m_sourceBlob);
+        Magick::Geometry geometry(  m_imageInfo->getValue("root[0].image.geometry.width").toInt()
+                                  , m_imageInfo->getValue("root[0].image.geometry.height").toInt()
+                                  , m_imageInfo->getValue("root[0].image.geometry.x").toInt()
+                                  , m_imageInfo->getValue("root[0].image.geometry.y").toInt()
+                                  );
+
+        if (geometry.isValid())
+        {
+            m_sourceImage->read(*m_sourceBlob, geometry);
+        }
+        else
+        {
+            qWarning() << "Invalid geometry in image metadata";
+            return;
+        }
         m_sourceImage->quiet(true);
     }
     catch( Magick::Error &error)
