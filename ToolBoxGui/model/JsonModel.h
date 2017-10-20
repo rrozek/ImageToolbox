@@ -1,11 +1,10 @@
-#ifndef JSONMODEL_H
-#define JSONMODEL_H
+#pragma once
 
 #include <QAbstractItemModel>
 #include <QJsonDocument>
+#include <QIODevice>
 
-#include "JsonObjectRoot.h"
-
+class JsonObjectRoot;
 /*! \class JsonModel
  *  \brief Subclass of QAbstractItemModel translating JSON object into QTreeview model
  *
@@ -18,7 +17,7 @@ public:
     virtual ~JsonModel();
 
     bool load(const QString& fileName);
-    bool load(QIODevice * device);
+    bool load(QIODevice* device);
     bool loadJson(const QByteArray& json);
     bool loadJson(const QJsonDocument& jsonDoc);
 
@@ -37,16 +36,11 @@ public:
     // editable model additions
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) Q_DECL_OVERRIDE;
-    bool setDataWithValidation(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
     JsonObjectRoot* rootItem() const;
-    void validateJsonIntegrity();
 
     void beginAppendRow(const QModelIndex &parent);
     void endAppendRow();
-
-signals:
-    void signalJsonIntegrityChanged(JsonValidityCheckResult result);
 
 private:
     QJsonValue dump() const;
@@ -55,9 +49,5 @@ private:
     QJsonDocument mDocument;
     QStringList mHeaders;
 
-    bool m_integrityCheckEnabled;
-
-
 };
 
-#endif // JSONMODEL_H

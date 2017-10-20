@@ -51,7 +51,7 @@ void ToolBox::setSource(const QString &absFilePath)
         qWarning() << "abc ImageMagick Exception: " << error.what();
         return;
     }
-    QString jsonString = QString::fromLocal8Bit(static_cast<const char*>(jsonMetadataRaw.data()), jsonMetadataRaw.length());
+    QString jsonString = QString::fromLocal8Bit(static_cast<const char*>(jsonMetadataRaw.data()), static_cast<int>(jsonMetadataRaw.length()));
     QJsonParseError error;
     QJsonDocument jsonMetadata = QJsonDocument::fromJson(jsonString.toUtf8(), &error);
     if (jsonMetadata.isNull())
@@ -106,7 +106,7 @@ void ToolBox::getImage(quint8 imageNumber, common::EImageFormat format, QByteArr
 {
     size_t dataSize = 0;
     char* rawArray = getImage(imageNumber, format, dataSize);
-    dataArray = QByteArray(rawArray, dataSize);
+    dataArray = QByteArray(rawArray, static_cast<int>(dataSize));
     delete[] rawArray;
 }
 
@@ -194,7 +194,7 @@ const ImageInfo& ToolBox::getImageInfo() const
     if (m_handler == nullptr)
     {
         qWarning() << "No image set so far";
-        return ImageInfo();
+        return ImageInfo::invalid;
     }
     return m_handler->getImageInfo();
 }

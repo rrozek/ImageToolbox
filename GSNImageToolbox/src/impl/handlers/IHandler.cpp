@@ -40,7 +40,7 @@ const ImageInfo &IHandler::getImageInfo() const
     if (m_imageInfo == nullptr)
     {
         qWarning() << Q_FUNC_INFO << "image info uninitialized";
-        return ImageInfo();
+        return ImageInfo::invalid;
     }
     return *m_imageInfo;
 }

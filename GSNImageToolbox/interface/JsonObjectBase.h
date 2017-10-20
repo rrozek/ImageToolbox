@@ -1,6 +1,5 @@
-#pragma once
-
-#include "gsnimagetoolbox_global.h"
+#ifndef JSONOBJECTBASE_H
+#define JSONOBJECTBASE_H
 
 #include <QJsonValue>
 #include <QJsonArray>
@@ -17,7 +16,7 @@
  * If object has children, then its \ref mValue is null and an appropriate \ref mType is set either to Object or Array
  */
 
-class GSNIMAGETOOLBOXSHARED_EXPORT JsonObjectBase
+class JsonObjectBase
 {
 public:
     explicit JsonObjectBase(JsonObjectBase * parent = 0);
@@ -68,4 +67,4 @@ private:
     QJsonValue mValue;
     QJsonValue::Type mType;
 };
-
+#endif // JSONOBJECTBASE_H

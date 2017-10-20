@@ -9,7 +9,6 @@
 JsonModel::JsonModel(QObject *parent)
     : QAbstractItemModel(parent)
     , mRootItem(new JsonObjectRoot(Q_NULLPTR))
-    , m_integrityCheckEnabled(true)
 {
     mHeaders.append("key");
     mHeaders.append("value");
@@ -249,59 +248,10 @@ bool JsonModel::setData(const QModelIndex &index, const QVariant &value, int rol
     return true;
 }
 
-/*! \brief Helper method to encapsulate updating model data along with json validity check
- *
- * \param index
- * \param value
- * \param role
- * \return true on success, false otherwise
- */
-bool JsonModel::setDataWithValidation(const QModelIndex &index, const QVariant &value, int role)
-{
-    bool ret = setData(index, value, role);
-    validateJsonIntegrity();
-    return ret;
-}
-
 //! Returns pointer to models root item
 JsonObjectRoot *JsonModel::rootItem() const
 {
     return mRootItem;
-}
-
-/*! \brief Performs all json validation tests.
- *
- * \details Method reports error via qt signal mechanism
- *          to other components (MainWindow)
- */
-void JsonModel::validateJsonIntegrity()
-{
-    if (!m_integrityCheckEnabled)
-        return;
-    JsonValidityCheckResult result;
-    bool success = true;
-
-    result.morphErrorsToGroup("!! Saving file disabled !!");
-
-    rootItem()->checkTableDefsIntegrity(result);
-    if (!result.success)
-        result.morphErrorsToGroup("TableDefs integrity errors");
-    success &= result.success;
-    result.success = true;
-
-    rootItem()->checkDataObjectsIntegrity(result);
-    if (!result.success)
-        result.morphErrorsToGroup("DataObjects integrity errors");
-    success &= result.success;
-    result.success = true;
-
-    rootItem()->checkCrossIntegrity(result);
-    if (!result.success)
-        result.morphErrorsToGroup("Cross TableDefs-DataObjects integrity errors");
-    success &= result.success;
-
-    result.success = success;
-    emit signalJsonIntegrityChanged(result);
 }
 
 /*! \brief Informs model about insert row procedure start

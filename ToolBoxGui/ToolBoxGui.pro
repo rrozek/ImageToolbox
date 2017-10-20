@@ -25,7 +25,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        ToolBoxGui.cpp
+        ToolBoxGui.cpp \
+        model/JsonModel.cpp
+
 
 HEADERS += \
-        ToolBoxGui.h
+        ToolBoxGui.h \
+        model/JsonModel.h
+
+LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Release/release/ -lGSNImageToolbox
+
+INCLUDEPATH += $$PWD/../GSNImageToolbox/interface
+DEPENDPATH += $$PWD/../GSNImageToolbox/interface
+

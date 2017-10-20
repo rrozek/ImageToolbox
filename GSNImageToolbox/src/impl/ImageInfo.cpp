@@ -8,7 +8,9 @@
 namespace GSNImageToolBox
 {
 
-ImageInfo::ImageInfo(QObject *parent)
+ImageInfo ImageInfo::invalid = ImageInfo();
+
+ImageInfo::ImageInfo()
     : m_rootItem(new JsonObjectRoot(Q_NULLPTR))
 {
 }
