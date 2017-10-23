@@ -129,41 +129,105 @@ char *ToolBox::getImage(quint8 imageNumber, common::EImageFormat format, size_t 
 
 void ToolBox::getThumbnail(float thumbPercentSize, common::EImageFormat format, QByteArray &dataArray)
 {
-
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
 }
 
 void ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray)
 {
-
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
 }
 
 char *ToolBox::getThumbnail(float thumbPercentSize, common::EImageFormat format, size_t &dataSize)
 {
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
     return nullptr;
 }
 
 char *ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, size_t &dataSize)
 {
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
     return nullptr;
 }
 
 void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, common::EImageFormat format, QByteArray &dataArray)
 {
-
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
 }
 
 void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray)
 {
-
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
 }
 
 char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, common::EImageFormat format, size_t &dataSize)
 {
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
     return nullptr;
 }
 
 char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, size_t &dataSize)
 {
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
+    return nullptr;
+}
+
+void ToolBox::getThumbnail(float thumbPercentSize, QByteArray &dataArray)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
+}
+
+void ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, QByteArray &dataArray)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
+}
+
+char *ToolBox::getThumbnail(float thumbPercentSize, size_t &dataSize)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
+    return nullptr;
+}
+
+char *ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, size_t &dataSize)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
+    return nullptr;
+}
+
+void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, QByteArray &dataArray)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
+}
+
+void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, QByteArray &dataArray)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
+}
+
+char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, size_t &dataSize)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
+    return nullptr;
+}
+
+char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, size_t &dataSize)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "NOT IMPLEMENTED YET";
     return nullptr;
 }
 

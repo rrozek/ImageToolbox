@@ -1,5 +1,4 @@
-#ifndef TOOLBOXGUI_H
-#define TOOLBOXGUI_H
+#pragma once
 
 #include <QDialog>
 
@@ -12,6 +11,7 @@
 #include <QListView>
 
 #include "model/JsonModel.h"
+#include "ToolBox.h"
 
 class ToolBoxGui : public QDialog
 {
@@ -26,8 +26,12 @@ private:
     void initGallery();
     void initMetadata();
 
+    void slotGalleryDirectoryChanged(const QModelIndex& index);
+    double calculatePercentCrop(const QSize& source, const QSize& destination);
+
+    GSNImageToolBox::ToolBox m_toolbox;
+
     QFileSystemModel *m_modelFolderExplorer;
-    QFileSystemModel *m_modelGallery;
     JsonModel *m_modelMetadata;
 
 
@@ -36,11 +40,9 @@ private:
 
     QTreeView *m_treeViewFolderExplorer;
     QTreeView *m_treeViewMetadata;
-//    QListWidget* m_listGallery;
-    QListView *m_listGallery;
+    QListWidget* m_listGallery;
 
 
     QGridLayout *m_layout;
 };
 
-#endif // TOOLBOXGUI_H

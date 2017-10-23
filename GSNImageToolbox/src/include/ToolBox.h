@@ -45,6 +45,7 @@ public:
     char* getImage(common::EImageFormat format, size_t &dataSize);
     char* getImage(quint8 imageNumber, common::EImageFormat format, size_t &dataSize);
 
+    // modify file format
     void getThumbnail(float thumbPercentSize, common::EImageFormat format, QByteArray &dataArray);
     void getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray);
     char* getThumbnail(float thumbPercentSize, common::EImageFormat format, size_t &dataSize);
@@ -53,6 +54,16 @@ public:
     void getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray);
     char* getThumbnail(quint32 cropToWidth, quint32 cropToHeight, common::EImageFormat format, size_t &dataSize);
     char* getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, size_t &dataSize);
+
+    // don't modify file format
+    void getThumbnail(float thumbPercentSize, QByteArray &dataArray);
+    void getThumbnail(float thumbPercentSize, quint8 imageNumber, QByteArray &dataArray);
+    char* getThumbnail(float thumbPercentSize, size_t &dataSize);
+    char* getThumbnail(float thumbPercentSize, quint8 imageNumber, size_t &dataSize);
+    void getThumbnail(quint32 cropToWidth, quint32 cropToHeight, QByteArray &dataArray);
+    void getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, QByteArray &dataArray);
+    char* getThumbnail(quint32 cropToWidth, quint32 cropToHeight, size_t &dataSize);
+    char* getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, size_t &dataSize);
 
     quint8 getImageCount() const;
 

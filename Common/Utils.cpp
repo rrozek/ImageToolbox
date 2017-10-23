@@ -3,7 +3,7 @@
 namespace common
 {
 
-QString Utils::filterImagesRegex = "/\.(tif?f|png|eps)$/i";
+QString Utils::filterImagesRegex = "/\\.(tif?f|png|eps)$/i";
 QStringList Utils::filterImagesList = Utils::initList();
 
 Utils::Utils()

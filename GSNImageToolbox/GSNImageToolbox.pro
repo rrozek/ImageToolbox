@@ -37,7 +37,6 @@ HEADERS += \
     src/include/ToolBox.h \
     src/include/gsnimagetoolbox_global.h \
     src/include/ImageInfo.h \
-    src/include/Common.h \
     src/impl/handlers/IHandler.h \
     src/impl/handlers/MultiPageImageHandler.h \
     src/impl/handlers/SingleImageHandler.h \
@@ -49,6 +48,8 @@ unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+include(../Common/Common.pri)
 
 
 win32: LIBS += -L$$PWD/src/lib/win/x64 -lCORE_RL_Magick++_
