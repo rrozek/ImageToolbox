@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+#include "Utils.h"
+
 ToolBoxGui::ToolBoxGui(QWidget *parent)
     : QDialog(parent)
 {
@@ -59,9 +61,12 @@ void ToolBoxGui::initGallery()
 {
     m_listGallery = new QListView(this);
     m_modelGallery = new QFileSystemModel(this);
+    m_modelGallery->setFilter(QDir::NoDotAndDotDot | QDir::Files);
+    m_modelGallery->setNameFilters(common::Utils::filterImagesList);
+
     m_listGallery->setModel(m_modelGallery);
     m_listGallery->setViewMode(QListView::IconMode);
-    m_listGallery->setIconSize(QSize(200, 200));
+    m_listGallery->setIconSize(QSize(120, 120));
     m_listGallery->setResizeMode(QListView::Adjust);
 
     m_layout->addWidget(m_listGallery, 1, 2);

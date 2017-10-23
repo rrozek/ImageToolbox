@@ -22,12 +22,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+DEFINES += QT_MESSAGELOGCONTEXT
+#DEFINES += QT_NO_DEBUG_OUTPUT
+
+VERSION = 1.0.1
+QMAKE_TARGET_COMPANY = "PBS Network GmbH"
+QMAKE_TARGET_PRODUCT = "ImageToolbox"
+QMAKE_TARGET_DESCRIPTION = "Image Toolbox"
+QMAKE_TARGET_COPYRIGHT = "copyright 2017 PBS Network GmbH"
+
+include(../Common/Common.pri)
 
 SOURCES += \
         main.cpp \
         ToolBoxGui.cpp \
         model/JsonModel.cpp
-
 
 HEADERS += \
         ToolBoxGui.h \
