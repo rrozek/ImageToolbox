@@ -15,6 +15,9 @@ public:
     quint8 getImageCount() const override;
     char *getImage(quint8 imageNumber, common::EImageFormat format, size_t &dataSize) override;
 
+    char *getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, size_t &dataSize) override;
+    char *getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, size_t &dataSize) override;
+
 protected:
     void handleSource() override;
 

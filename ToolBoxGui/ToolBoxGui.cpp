@@ -2,7 +2,7 @@
 
 #include <QDebug>
 #include <QJsonObject>
-
+#include <QJsonArray>
 
 #include "Utils.h"
 
@@ -93,9 +93,8 @@ void ToolBoxGui::slotGalleryDirectoryChanged(const QModelIndex &index)
     {
         // create Icon using thumbnail from ImageToolboxLib here
         m_toolbox.setSource(fileInfo.absoluteFilePath());
-        QJsonObject metaData;
-        m_toolbox.getImageInfo().dumpTo(metaData);
-        double percentCrop = calculatePercentCrop(QSize(metaData.value("root[0].image.geometry.width").toInt(), metaData.value("root[0].image.geometry.height").toInt())
+        const GSNImageToolBox::ImageInfo& imgInfo = m_toolbox.getImageInfo();
+        double percentCrop = calculatePercentCrop(QSize(imgInfo.getValue("root[0].image.geometry.width").toInt(), imgInfo.getValue("root[0].image.geometry.height").toInt())
                                                  , m_listGallery->iconSize());
         qDebug() << "percentCrop " << percentCrop;
         QByteArray thumbnailData;
@@ -103,19 +102,24 @@ void ToolBoxGui::slotGalleryDirectoryChanged(const QModelIndex &index)
         QPixmap iconPixmap(m_listGallery->iconSize());
         iconPixmap.loadFromData(thumbnailData);
         QIcon icon(iconPixmap);
-        QListWidgetItem* item = new QListWidgetItem(fileInfo.fileName(), m_listGallery);
+        QListWidgetItem* item = new QListWidgetItem(icon, fileInfo.fileName(), m_listGallery);
         Q_UNUSED(item)
     }
 }
 
 double ToolBoxGui::calculatePercentCrop(const QSize &source, const QSize &destination)
 {
+    qDebug() << "calculatePercentCrop source " << source << "destination: " << destination;
     bool cropNeeded = false;
     if (source.width() > destination.width())
         cropNeeded = true;
     if (source.height() > destination.height())
         cropNeeded = true;
 
+    qDebug() << "crop needed:" << cropNeeded;
+    qDebug() << qMax(static_cast<double>(source.width()) / static_cast<double>(destination.width())
+                     , static_cast<double>(source.height()) / static_cast<double>(destination.height())
+                     );
     if (cropNeeded)
         return 1.0 / qMax(static_cast<double>(source.width()) / static_cast<double>(destination.width())
                          , static_cast<double>(source.height()) / static_cast<double>(destination.height())

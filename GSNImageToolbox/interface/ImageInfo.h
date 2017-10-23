@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QObject>
 
+#include "gsnimagetoolbox_global.h"
 
 #include "Common.h"
 #include <memory>
@@ -20,7 +21,7 @@ class Image;
 
 namespace GSNImageToolBox
 {
-class ImageInfo
+class GSNIMAGETOOLBOXSHARED_EXPORT ImageInfo
 {
 public:
     explicit ImageInfo();

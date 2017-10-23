@@ -45,5 +45,19 @@ const ImageInfo &IHandler::getImageInfo() const
     return *m_imageInfo;
 }
 
+char *IHandler::getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, size_t &dataSize)
+{
+    return getThumbnail(m_imageInfo->getValue("root[" + QString::number(imageNumber) + "].image.geometry.width").toInt() * thumbPercentSize
+                        , m_imageInfo->getValue("root[" + QString::number(imageNumber) + "].image.geometry.width").toInt() * thumbPercentSize
+                        , imageNumber, format, dataSize);
+}
+
+char *IHandler::getThumbnail(float thumbPercentSize, quint8 imageNumber, size_t &dataSize)
+{
+    return getThumbnail(m_imageInfo->getValue("root[" + QString::number(imageNumber) + "].image.geometry.width").toInt() * thumbPercentSize
+                        , m_imageInfo->getValue("root[" + QString::number(imageNumber) + "].image.geometry.width").toInt() * thumbPercentSize
+                        , imageNumber, dataSize);
+}
+
 }
 }

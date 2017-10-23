@@ -24,6 +24,25 @@ char *MultiPageImageHandler::getImage(quint8 imageNumber, common::EImageFormat f
     return nullptr;
 }
 
+char *MultiPageImageHandler::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, size_t &dataSize)
+{
+    Q_UNUSED(cropToWidth)
+    Q_UNUSED(cropToHeight)
+    Q_UNUSED(imageNumber)
+    Q_UNUSED(format)
+    Q_UNUSED(dataSize)
+    return nullptr;
+}
+
+char *MultiPageImageHandler::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, size_t &dataSize)
+{
+    Q_UNUSED(cropToWidth)
+    Q_UNUSED(cropToHeight)
+    Q_UNUSED(imageNumber)
+    Q_UNUSED(dataSize)
+    return nullptr;
+}
+
 void MultiPageImageHandler::handleSource()
 {
 

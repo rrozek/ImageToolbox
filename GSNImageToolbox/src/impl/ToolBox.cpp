@@ -129,106 +129,117 @@ char *ToolBox::getImage(quint8 imageNumber, common::EImageFormat format, size_t 
 
 void ToolBox::getThumbnail(float thumbPercentSize, common::EImageFormat format, QByteArray &dataArray)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
+    return getThumbnail(thumbPercentSize, 0, format, dataArray);
 }
 
 void ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
+    size_t dataSize = 0;
+    char* rawArray = getThumbnail(thumbPercentSize, imageNumber, format, dataSize);
+    dataArray = QByteArray(rawArray, static_cast<int>(dataSize));
+    delete[] rawArray;
 }
 
 char *ToolBox::getThumbnail(float thumbPercentSize, common::EImageFormat format, size_t &dataSize)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
-    return nullptr;
+    return getThumbnail(thumbPercentSize, 0, format, dataSize);
 }
 
 char *ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, size_t &dataSize)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
-    return nullptr;
+    if (m_handler == nullptr)
+    {
+        qWarning() << "No image set so far";
+        dataSize = 0;
+        return nullptr;
+    }
+    return m_handler->getThumbnail(thumbPercentSize, imageNumber, format, dataSize);
 }
 
 void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, common::EImageFormat format, QByteArray &dataArray)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
+    return getThumbnail(cropToWidth, cropToHeight, 0, format, dataArray);
 }
 
 void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
+    size_t dataSize = 0;
+    char* rawArray = getThumbnail(cropToWidth, cropToHeight, imageNumber, format, dataSize);
+    dataArray = QByteArray(rawArray, static_cast<int>(dataSize));
+    delete[] rawArray;
 }
 
 char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, common::EImageFormat format, size_t &dataSize)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
-    return nullptr;
+    return getThumbnail(cropToWidth, cropToHeight, 0, format, dataSize);
 }
 
 char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, size_t &dataSize)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
-    return nullptr;
+    if (m_handler == nullptr)
+    {
+        qWarning() << "No image set so far";
+        dataSize = 0;
+        return nullptr;
+    }
+    return m_handler->getThumbnail(cropToWidth, cropToHeight, imageNumber, format, dataSize);
 }
 
 void ToolBox::getThumbnail(float thumbPercentSize, QByteArray &dataArray)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
+    return getThumbnail(thumbPercentSize, 0, dataArray);
 }
 
 void ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, QByteArray &dataArray)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
+    size_t dataSize = 0;
+    char* rawArray = getThumbnail(thumbPercentSize, imageNumber, dataSize);
+    dataArray = QByteArray(rawArray, static_cast<int>(dataSize));
+    delete[] rawArray;
 }
 
 char *ToolBox::getThumbnail(float thumbPercentSize, size_t &dataSize)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
-    return nullptr;
+    return getThumbnail(thumbPercentSize, 0, dataSize);
 }
 
 char *ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, size_t &dataSize)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
-    return nullptr;
+    if (m_handler == nullptr)
+    {
+        qWarning() << "No image set so far";
+        dataSize = 0;
+        return nullptr;
+    }
+    return m_handler->getThumbnail(thumbPercentSize, imageNumber, dataSize);
 }
 
 void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, QByteArray &dataArray)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
+    return getThumbnail(cropToWidth, cropToHeight, 0, dataArray);
 }
 
 void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, QByteArray &dataArray)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
-}
+    size_t dataSize = 0;
+    char* rawArray = getThumbnail(cropToWidth, cropToHeight, imageNumber, dataSize);
+    dataArray = QByteArray(rawArray, static_cast<int>(dataSize));
+    delete[] rawArray;}
 
 char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, size_t &dataSize)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
-    return nullptr;
+    return getThumbnail(cropToWidth, cropToHeight, 0, dataSize);
 }
 
 char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, size_t &dataSize)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "NOT IMPLEMENTED YET";
-    return nullptr;
+    if (m_handler == nullptr)
+    {
+        qWarning() << "No image set so far";
+        dataSize = 0;
+        return nullptr;
+    }
+    return m_handler->getThumbnail(cropToWidth, cropToHeight, imageNumber, dataSize);
 }
 
 quint8 ToolBox::getImageCount() const

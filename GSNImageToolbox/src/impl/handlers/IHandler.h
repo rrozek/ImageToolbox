@@ -30,6 +30,11 @@ public:
     virtual void printImageInfo() const;
     virtual const ImageInfo& getImageInfo() const;
 
+
+    virtual char *getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, size_t &dataSize) = 0;
+    virtual char *getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, size_t &dataSize);
+    virtual char *getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, size_t &dataSize) = 0;
+    virtual char *getThumbnail(float thumbPercentSize, quint8 imageNumber, size_t &dataSize);
 protected:
 
     virtual void applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format) = 0;

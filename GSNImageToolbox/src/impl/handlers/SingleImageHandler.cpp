@@ -36,6 +36,70 @@ char *SingleImageHandler::getImage(quint8 imageNumber, common::EImageFormat form
     {
         Magick::Blob outputBlob;
         applyMaskFromClippingPath(*m_sourceImage,format);
+        std::string sourceMagick = m_sourceImage->magick();
+        m_sourceImage->magick(common::EImageFormatString[format]);
+        m_sourceImage->write(&outputBlob);
+        m_sourceImage->magick(sourceMagick);
+
+        dataSize = outputBlob.length();
+
+        char* returnArray = new char[dataSize];
+        memcpy(returnArray, static_cast<const char*>(outputBlob.data()), outputBlob.length());
+        return returnArray;
+    }
+    catch( Magick::Exception &error)
+    {
+        qWarning() << Q_FUNC_INFO << "caught ImageMagick exception";
+        qWarning() << error.what();
+        dataSize = 0;
+        return nullptr;
+    }
+}
+
+char *SingleImageHandler::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, size_t &dataSize)
+{
+    if ( imageNumber > 0 )
+    {
+        qWarning() << "Only one image is available, requested image number: " << imageNumber;
+        dataSize = 0;
+        return nullptr;
+    }
+    try
+    {
+        Magick::Blob outputBlob;
+        std::string sourceMagick = m_sourceImage->magick();
+        m_sourceImage->magick(common::EImageFormatString[format]);
+        m_sourceImage->thumbnail(Magick::Geometry(cropToWidth, cropToHeight));
+        m_sourceImage->write(&outputBlob);
+        m_sourceImage->magick(sourceMagick);
+
+        dataSize = outputBlob.length();
+
+        char* returnArray = new char[dataSize];
+        memcpy(returnArray, static_cast<const char*>(outputBlob.data()), outputBlob.length());
+        return returnArray;
+    }
+    catch( Magick::Exception &error)
+    {
+        qWarning() << Q_FUNC_INFO << "caught ImageMagick exception";
+        qWarning() << error.what();
+        dataSize = 0;
+        return nullptr;
+    }
+}
+
+char *SingleImageHandler::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, size_t &dataSize)
+{
+    if ( imageNumber > 0 )
+    {
+        qWarning() << "Only one image is available, requested image number: " << imageNumber;
+        dataSize = 0;
+        return nullptr;
+    }
+    try
+    {
+        Magick::Blob outputBlob;
+        m_sourceImage->thumbnail(Magick::Geometry(cropToWidth, cropToHeight));
         m_sourceImage->write(&outputBlob);
 
         dataSize = outputBlob.length();
@@ -97,8 +161,6 @@ void SingleImageHandler::applyMaskFromClippingPath(Magick::Image &image, common:
         }
         else
             qDebug() << "no clip path present.";
-
-        image.magick(common::EImageFormatString[format]);
     }
     catch( Magick::Error &error)
     {
