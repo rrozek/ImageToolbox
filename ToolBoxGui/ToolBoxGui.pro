@@ -44,8 +44,7 @@ HEADERS += \
         ThumbnailLoader.h \
         UtilsGUI.h
 
-LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Release/release/ -lGSNImageToolbox
-#LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Debug/debug/ -lGSNImageToolbox
+LIBS += -L$$PWD/../lib -lGSNImageToolbox
 
 INCLUDEPATH += $$PWD/../GSNImageToolbox/interface
 DEPENDPATH += $$PWD/../GSNImageToolbox/interface
