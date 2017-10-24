@@ -49,19 +49,23 @@ unix {
     INSTALLS += target
 }
 
-include(../Common/Common.pri)
+include(src/impl/Common/Common.pri)
 
+LIBS += -L"C:/Program Files/ImageMagick-7.0.7-Q16/lib" -lCORE_RL_Magick++_
+LIBS += -L"C:/Program Files/ImageMagick-7.0.7-Q16/lib" -lCORE_RL_MagickCore_
+#win32: LIBS += -L$$PWD/src/lib/win/x64 -lCORE_RL_Magick++_
+#win32: LIBS += -L$$PWD/src/lib/win/x64 -lCORE_RL_MagickCore_
 
-win32: LIBS += -L$$PWD/src/lib/win/x64 -lCORE_RL_Magick++_
-win32: LIBS += -L$$PWD/src/lib/win/x64 -lCORE_RL_MagickCore_
-
-unix:!macx: LIBS += -L/home/rozek/ImageMagickInstall/lib -lMagick++-7.Q16HDRI
-unix:!macx: LIBS += -L/home/rozek/ImageMagickInstall/lib -lMagickCore-7.Q16HDRI
-unix:!macx: INCLUDEPATH += /home/rozek/ImageMagickInstall/include/ImageMagick-7
-unix:!macx: DEPENDPATH += /home/rozek/ImageMagickInstall/include/ImageMagick-7
+#unix:!macx: LIBS += -L/home/rozek/ImageMagickInstall/lib -lMagick++-7.Q16HDRI
+#unix:!macx: LIBS += -L/home/rozek/ImageMagickInstall/lib -lMagickCore-7.Q16HDRI
+#unix:!macx: INCLUDEPATH += /home/rozek/ImageMagickInstall/include/ImageMagick-7
+#unix:!macx: DEPENDPATH += /home/rozek/ImageMagickInstall/include/ImageMagick-7
 
 INCLUDEPATH += $$PWD/src/include
 DEPENDPATH += $$PWD/src/include
 
-INCLUDEPATH += $$PWD/src/include/ImageMagick
-DEPENDPATH += $$PWD/src/include/ImageMagick
+#INCLUDEPATH += $$PWD/src/include/ImageMagick
+#DEPENDPATH += $$PWD/src/include/ImageMagick
+
+INCLUDEPATH += "C:/Program Files/ImageMagick-7.0.7-Q16/include"
+DEPENDPATH += "C:/Program Files/ImageMagick-7.0.7-Q16/include"

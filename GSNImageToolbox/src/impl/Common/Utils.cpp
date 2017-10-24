@@ -1,5 +1,7 @@
 #include "Utils.h"
 
+namespace GSNImageToolBox
+{
 namespace common
 {
 
@@ -28,3 +30,5 @@ QStringList Utils::initList()
 
 
 } // namespace common
+} // namespace GSNImageToolBox
+

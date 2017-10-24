@@ -3,8 +3,13 @@
 #include <QDebug>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QElapsedTimer>
+#include <QThreadPool>
+#include <QUuid>
 
+#include "ThumbnailLoader.h"
 #include "Utils.h"
+#include "UtilsGUI.h"
 
 ToolBoxGui::ToolBoxGui(QWidget *parent)
     : QDialog(parent)
@@ -61,15 +66,6 @@ void ToolBoxGui::initGallery()
     m_listGallery->setIconSize(QSize(120, 120));
     m_listGallery->setResizeMode(QListView::Adjust);
 
-//    m_modelGallery = new QFileSystemModel(this);
-//    m_modelGallery->setFilter(QDir::NoDotAndDotDot | QDir::Files);
-//    m_modelGallery->setNameFilters(common::Utils::filterImagesList);
-//    m_modelGallery->setNameFilterDisables(false);
-
-//    m_listGallery->setModel(m_modelGallery);
-//    m_listGallery->setRootIndex(m_modelGallery->setRootPath("C:/"));
-
-
     m_layout->addWidget(m_listGallery, 1, 2);
 }
 
@@ -81,48 +77,40 @@ void ToolBoxGui::initMetadata()
 
 void ToolBoxGui::slotGalleryDirectoryChanged(const QModelIndex &index)
 {
-    QString galleryPath = m_modelFolderExplorer->fileInfo(index).absoluteDir().absolutePath();
+    m_currentGalleryListGUID = QUuid::createUuid().toString();
     QDir currentGalleryDir(m_modelFolderExplorer->fileInfo(index).absoluteFilePath());
     currentGalleryDir.setFilter(QDir::NoDotAndDotDot | QDir::Files);
-    currentGalleryDir.setNameFilters(common::Utils::filterImagesList);
+    currentGalleryDir.setNameFilters(GSNImageToolBox::common::Utils::filterImagesList);
 
     // maybe clean references to metadata part here as well
     m_listGallery->clear();
     qDebug() << "Inserting " << currentGalleryDir.entryInfoList().size();
     for (QFileInfo fileInfo : currentGalleryDir.entryInfoList())
     {
-        // create Icon using thumbnail from ImageToolboxLib here
-        m_toolbox.setSource(fileInfo.absoluteFilePath());
-        const GSNImageToolBox::ImageInfo& imgInfo = m_toolbox.getImageInfo();
-        double percentCrop = calculatePercentCrop(QSize(imgInfo.getValue("root[0].image.geometry.width").toInt(), imgInfo.getValue("root[0].image.geometry.height").toInt())
-                                                 , m_listGallery->iconSize());
-        qDebug() << "percentCrop " << percentCrop;
-        QByteArray thumbnailData;
-        m_toolbox.getThumbnail(percentCrop, thumbnailData);
-        QPixmap iconPixmap(m_listGallery->iconSize());
-        iconPixmap.loadFromData(thumbnailData);
-        QIcon icon(iconPixmap);
-        QListWidgetItem* item = new QListWidgetItem(icon, fileInfo.fileName(), m_listGallery);
-        Q_UNUSED(item)
+        // move thumbnail creation to separate thread
+        // set placeholder icon and exchange it with real image later
+        QListWidgetItem* item = new QListWidgetItem(m_utilsGui.getIcon(GSNImageToolBox::common::EImageFormatFromString(fileInfo.suffix())), fileInfo.fileName(), m_listGallery);
+
+        ThumbnailLoader* loader = new ThumbnailLoader(m_listGallery->iconSize(), fileInfo.absoluteFilePath(), item->listWidget()->row(item), m_currentGalleryListGUID);
+        connect(loader, &ThumbnailLoader::signalLoaded, this, &ToolBoxGui::slotThumbLoaded);
+        QThreadPool::globalInstance()->start(loader);
+
     }
 }
 
-double ToolBoxGui::calculatePercentCrop(const QSize &source, const QSize &destination)
+void ToolBoxGui::slotThumbLoaded(QIcon icon, int rowOfItemToUpdate, QString listGUID)
 {
-    qDebug() << "calculatePercentCrop source " << source << "destination: " << destination;
-    bool cropNeeded = false;
-    if (source.width() > destination.width())
-        cropNeeded = true;
-    if (source.height() > destination.height())
-        cropNeeded = true;
+    if (m_currentGalleryListGUID != listGUID)
+    {
+        qWarning() << "list already invalid";
+        return;
+    }
+    QListWidgetItem* item = m_listGallery->item(rowOfItemToUpdate);
+    if (item == Q_NULLPTR)
+    {
+        qWarning() << "Invalid item at row: " << rowOfItemToUpdate << "no icon set";
+        return;
+    }
 
-    qDebug() << "crop needed:" << cropNeeded;
-    qDebug() << qMax(static_cast<double>(source.width()) / static_cast<double>(destination.width())
-                     , static_cast<double>(source.height()) / static_cast<double>(destination.height())
-                     );
-    if (cropNeeded)
-        return 1.0 / qMax(static_cast<double>(source.width()) / static_cast<double>(destination.width())
-                         , static_cast<double>(source.height()) / static_cast<double>(destination.height())
-                         );
-    return 1.0;
+    item->setIcon(icon);
 }

@@ -18,7 +18,6 @@ void Eps2Png(const QFileInfo& info);
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    GSNImageToolBox::ToolBox::InitializeMagickEnvironment();
 
 
     QStringList params = a.arguments();
@@ -34,6 +33,7 @@ int main(int argc, char *argv[])
         qWarning() << "directory: " << params[1] << "does not exist or is unreadable";
         return -2;
     }
+    GSNImageToolBox::ToolBox::InitializeMagickEnvironment();
 
     usedDir.mkdir("Tiff2Png");
     usedDir.mkdir("Tiff2Eps");

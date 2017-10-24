@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QString>
+#include "gsnimagetoolbox_global.h"
 
 namespace GSNImageToolBox
 {
@@ -37,22 +38,7 @@ static const char* EImageFormatStringCapital[] =
 , "Jpeg"
 };
 
-static_assert(sizeof(GSNImageToolBox::common::EImageFormatString) / sizeof(char*) == GSNImageToolBox::common::COUNT
-              , "EImageFormat and EImageFormatString don't match. Did you forget to specify string representation of new enum?");
-
-static EImageFormat EImageFormatFromString(QString format)
-{
-    EImageFormat returnVal = COUNT;
-    for ( quint8 i = 0; i < common::COUNT; ++i )
-    {
-        if (QString(EImageFormatString[i]).contains(format, Qt::CaseInsensitive))
-        {
-            returnVal = static_cast<common::EImageFormat>(i);
-            break;
-        }
-    }
-    return returnVal;
-}
+GSNIMAGETOOLBOXSHARED_EXPORT EImageFormat EImageFormatFromString(QString format);
 
 } // namespace Common
 } // namespace GSNImageToolBox

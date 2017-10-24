@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IHandler.h"
+#include <QElapsedTimer>
 
 namespace GSNImageToolBox
 {
@@ -25,6 +26,7 @@ protected:
 
 private:
     std::unique_ptr<Magick::Image> m_sourceImage;
+    QElapsedTimer m_timerPerformance;
 
 };
 

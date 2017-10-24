@@ -13,6 +13,7 @@
 
 #include <QCoreApplication>
 #include <QProcessEnvironment>
+#include <QElapsedTimer>
 
 #include "src/impl/handlers/SingleImageHandler.h"
 //#include "src/impl/handlers/MultiPageImageHandler.h"
@@ -117,7 +118,6 @@ char* ToolBox::getImage(common::EImageFormat format, size_t& dataSize)
 
 char *ToolBox::getImage(quint8 imageNumber, common::EImageFormat format, size_t &dataSize)
 {
-
     if (m_handler == nullptr)
     {
         qWarning() << "No image set so far";
@@ -129,7 +129,7 @@ char *ToolBox::getImage(quint8 imageNumber, common::EImageFormat format, size_t 
 
 void ToolBox::getThumbnail(float thumbPercentSize, common::EImageFormat format, QByteArray &dataArray)
 {
-    return getThumbnail(thumbPercentSize, 0, format, dataArray);
+    getThumbnail(thumbPercentSize, 0, format, dataArray);
 }
 
 void ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray)
@@ -158,7 +158,7 @@ char *ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, common::
 
 void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, common::EImageFormat format, QByteArray &dataArray)
 {
-    return getThumbnail(cropToWidth, cropToHeight, 0, format, dataArray);
+    getThumbnail(cropToWidth, cropToHeight, 0, format, dataArray);
 }
 
 void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, common::EImageFormat format, QByteArray &dataArray)
@@ -187,7 +187,10 @@ char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 im
 
 void ToolBox::getThumbnail(float thumbPercentSize, QByteArray &dataArray)
 {
-    return getThumbnail(thumbPercentSize, 0, dataArray);
+    QElapsedTimer timer;
+    timer.start();
+    getThumbnail(thumbPercentSize, 0, dataArray);
+    qWarning() << "Whole thumbnail generation took: " << timer.elapsed();
 }
 
 void ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, QByteArray &dataArray)
@@ -216,7 +219,10 @@ char *ToolBox::getThumbnail(float thumbPercentSize, quint8 imageNumber, size_t &
 
 void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, QByteArray &dataArray)
 {
-    return getThumbnail(cropToWidth, cropToHeight, 0, dataArray);
+    QElapsedTimer timer;
+    timer.start();
+    getThumbnail(cropToWidth, cropToHeight, 0, dataArray);
+    qWarning() << "Whole thumbnail generation took: " << timer.elapsed();
 }
 
 void ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, QByteArray &dataArray)

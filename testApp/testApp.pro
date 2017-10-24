@@ -29,5 +29,5 @@ unix:!macx|win32: LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC
 #unix:!macx|win32: LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_7_0_GCC_64bit-Release/ -lGSNImageToolbox
 
 
-INCLUDEPATH += $$PWD/../GSNImageToolbox/src/include
-DEPENDPATH += $$PWD/../GSNImageToolbox/src/include
+INCLUDEPATH += $$PWD/../GSNImageToolbox/interface
+DEPENDPATH += $$PWD/../GSNImageToolbox/interface

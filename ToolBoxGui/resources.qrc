@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/thumbs">
+        <file>resources/eps.png</file>
+        <file>resources/jpeg.png</file>
+        <file>resources/png.png</file>
+        <file>resources/tiff.png</file>
+    </qresource>
+</RCC>

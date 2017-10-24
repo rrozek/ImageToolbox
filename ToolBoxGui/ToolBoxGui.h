@@ -12,6 +12,7 @@
 
 #include "model/JsonModel.h"
 #include "ToolBox.h"
+#include "UtilsGUI.h"
 
 class ToolBoxGui : public QDialog
 {
@@ -27,9 +28,8 @@ private:
     void initMetadata();
 
     void slotGalleryDirectoryChanged(const QModelIndex& index);
-    double calculatePercentCrop(const QSize& source, const QSize& destination);
 
-    GSNImageToolBox::ToolBox m_toolbox;
+    void slotThumbLoaded(QIcon icon, int rowOfItemToUpdate, QString listGUID);
 
     QFileSystemModel *m_modelFolderExplorer;
     JsonModel *m_modelMetadata;
@@ -41,7 +41,9 @@ private:
     QTreeView *m_treeViewFolderExplorer;
     QTreeView *m_treeViewMetadata;
     QListWidget* m_listGallery;
+    QString m_currentGalleryListGUID;
 
+    GSNImageToolBox::common::UtilsGUI m_utilsGui;
 
     QGridLayout *m_layout;
 };

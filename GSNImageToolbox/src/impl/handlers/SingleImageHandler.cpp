@@ -66,17 +66,20 @@ char *SingleImageHandler::getThumbnail(quint32 cropToWidth, quint32 cropToHeight
     }
     try
     {
+        m_timerPerformance.restart();
         Magick::Blob outputBlob;
         std::string sourceMagick = m_sourceImage->magick();
         m_sourceImage->magick(common::EImageFormatString[format]);
         m_sourceImage->thumbnail(Magick::Geometry(cropToWidth, cropToHeight));
+        m_sourceImage->extent(Magick::Geometry(qMax(cropToWidth, cropToHeight), qMax(cropToWidth, cropToHeight)), Magick::Color("white"), Magick::CenterGravity);
         m_sourceImage->write(&outputBlob);
         m_sourceImage->magick(sourceMagick);
 
         dataSize = outputBlob.length();
-
+        quint64 magickModif = m_timerPerformance.elapsed();
         char* returnArray = new char[dataSize];
         memcpy(returnArray, static_cast<const char*>(outputBlob.data()), outputBlob.length());
+        qWarning() << "Handler getThumbnail took: " << m_timerPerformance.elapsed() << "magick modif took " << magickModif << "which is " << 100 * static_cast<double>(static_cast<double>(magickModif) / static_cast<double>(m_timerPerformance.elapsed())) << "percent";
         return returnArray;
     }
     catch( Magick::Exception &error)
@@ -98,14 +101,18 @@ char *SingleImageHandler::getThumbnail(quint32 cropToWidth, quint32 cropToHeight
     }
     try
     {
+        m_timerPerformance.restart();
         Magick::Blob outputBlob;
         m_sourceImage->thumbnail(Magick::Geometry(cropToWidth, cropToHeight));
+        m_sourceImage->extent(Magick::Geometry(qMax(cropToWidth, cropToHeight), qMax(cropToWidth, cropToHeight)), Magick::Color("white"), Magick::CenterGravity);
         m_sourceImage->write(&outputBlob);
 
         dataSize = outputBlob.length();
+        quint64 magickModif = m_timerPerformance.elapsed();
 
         char* returnArray = new char[dataSize];
         memcpy(returnArray, static_cast<const char*>(outputBlob.data()), outputBlob.length());
+        qWarning() << "Handler getThumbnail took: " << m_timerPerformance.elapsed() << "magick modif took " << magickModif << "which is " << static_cast<double>(static_cast<double>(magickModif) / static_cast<double>(m_timerPerformance.elapsed())) << "percent";
         return returnArray;
     }
     catch( Magick::Exception &error)

@@ -31,19 +31,25 @@ QMAKE_TARGET_PRODUCT = "ImageToolbox"
 QMAKE_TARGET_DESCRIPTION = "Image Toolbox"
 QMAKE_TARGET_COPYRIGHT = "copyright 2017 PBS Network GmbH"
 
-include(../Common/Common.pri)
-
 SOURCES += \
         main.cpp \
         ToolBoxGui.cpp \
-        model/JsonModel.cpp
+        model/JsonModel.cpp \
+        ThumbnailLoader.cpp \
+        UtilsGUI.cpp
 
 HEADERS += \
         ToolBoxGui.h \
-        model/JsonModel.h
+        model/JsonModel.h \
+        ThumbnailLoader.h \
+        UtilsGUI.h
 
 LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Release/release/ -lGSNImageToolbox
+#LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Debug/debug/ -lGSNImageToolbox
 
 INCLUDEPATH += $$PWD/../GSNImageToolbox/interface
 DEPENDPATH += $$PWD/../GSNImageToolbox/interface
+
+RESOURCES += \
+    resources.qrc
 

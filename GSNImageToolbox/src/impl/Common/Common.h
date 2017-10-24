@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QString>
+#include "gsnimagetoolbox_global.h"
 
 namespace GSNImageToolBox
 {
@@ -37,7 +38,7 @@ static const char* EImageFormatStringCapital[] =
 , "Jpeg"
 };
 
-static EImageFormat EImageFormatFromString(QString format);
+GSNIMAGETOOLBOXSHARED_EXPORT EImageFormat EImageFormatFromString(QString format);
 
 } // namespace Common
 } // namespace GSNImageToolBox

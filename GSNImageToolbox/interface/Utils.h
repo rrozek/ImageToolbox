@@ -2,12 +2,15 @@
 
 #include <QDebug>
 #include <QString>
+#include "gsnimagetoolbox_global.h"
+
+namespace GSNImageToolBox
+{
 
 namespace common
 {
 
-
-class Utils
+class GSNIMAGETOOLBOXSHARED_EXPORT Utils
 {
 public:
     Utils();
@@ -20,3 +23,5 @@ private:
 };
 
 } // namespace common
+} // namespace GSNImageToolBox
+
