@@ -16,7 +16,7 @@ void ThumbnailLoader::run()
 
     toolbox.setSource(m_fileInfo.absoluteFilePath());
     QByteArray thumbnailData;
-    toolbox.getThumbnail(static_cast<quint32>(m_thumbSize.width()), static_cast<quint32>(m_thumbSize.height()), thumbnailData);
+    toolbox.getThumbnail(static_cast<quint32>(m_thumbSize.width()), static_cast<quint32>(m_thumbSize.height()), GSNImageToolBox::common::PNG, thumbnailData);
     QPixmap iconPixmap(m_thumbSize);
     iconPixmap.loadFromData(thumbnailData);
     QIcon icon(iconPixmap);

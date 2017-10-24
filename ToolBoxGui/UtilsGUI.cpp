@@ -8,7 +8,7 @@ namespace common
 
 UtilsGUI::UtilsGUI()
 {
-    initIcons();
+    placeHolderIcons = initIcons();
 }
 
 const QIcon UtilsGUI::getIcon(EImageFormat format) const
