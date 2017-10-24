@@ -3,7 +3,9 @@
 call ..\scripts\CloneRepositories.cmd https://github.com/ImageMagick shallow
 
 set INNOSETUP=C:\InnoSetup
-if exist "C:\InnoSetup" goto strawberry
+set INNOINSTALL=C:\InnoSetup\innosetup-5.5.9-unicode.exe
+
+if exist %INNOINSTALL% exit
 
 mkdir %INNOSETUP%
 cd %INNOSETUP%
@@ -40,6 +42,7 @@ powershell -ExecutionPolicy Unrestricted (New-Object Net.WebClient).DownloadFile
 :install
 echo %~dp0
 cd %~dp0
+
 powershell -ExecutionPolicy Unrestricted .\Install-InnoSetup.ps1
 if "%1" == "x86" powershell -ExecutionPolicy Unrestricted .\Install-StrawberryPerl-x86.ps1
 if "%1" == "x64" powershell -ExecutionPolicy Unrestricted .\Install-StrawberryPerl-x64.ps1

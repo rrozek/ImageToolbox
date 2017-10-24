@@ -103,10 +103,6 @@ function BuildConfiguration($config)
 
   Set-Location ..
 
-  if ($config.perl -eq $true)
-  {
-    BuildPerlMagick $platform
-  }
 }
 
 function BuildPerlMagick($platform)
