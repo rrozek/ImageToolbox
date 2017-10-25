@@ -18,7 +18,9 @@ void ThumbnailLoader::run()
     QByteArray thumbnailData;
     toolbox.getThumbnail(static_cast<quint32>(m_thumbSize.width()), static_cast<quint32>(m_thumbSize.height()), GSNImageToolBox::common::PNG, thumbnailData);
     QPixmap iconPixmap(m_thumbSize);
-    iconPixmap.loadFromData(thumbnailData);
+    if (!iconPixmap.loadFromData(thumbnailData))
+        return;
+
     QIcon icon(iconPixmap);
     emit signalLoaded(icon, m_rowOfItemToUpdate, m_listGUID);
 }

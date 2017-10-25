@@ -10,6 +10,12 @@ namespace GSNImageToolBox
 namespace handlers
 {
 
+SingleImageHandler::SingleImageHandler(const QJsonDocument &jsonImageInfo)
+    : IHandler(jsonImageInfo)
+{
+
+}
+
 SingleImageHandler::SingleImageHandler(std::shared_ptr<Magick::Blob> blob, const QJsonDocument &jsonImageInfo)
     : IHandler(blob, jsonImageInfo)
 {

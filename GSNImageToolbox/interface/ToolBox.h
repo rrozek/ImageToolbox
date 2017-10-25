@@ -7,6 +7,9 @@
 #include "ImageInfo.h"
 
 #include <memory>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 namespace GSNImageToolBox
 {
@@ -35,6 +38,7 @@ public:
     ToolBox();
     ~ToolBox();
 
+    QJsonDocument pingSource(const QString& absFilePath);
     void setSource(const QString& absFilePath);
 //    void setSource(const char* data, size_t size); // deprecated due to performace issues
 
@@ -73,6 +77,7 @@ public:
     static bool magickInitialized;
 
 private:
+    void prepareSource(const QString& absFilePath, Magick::Image& sourceImage, QJsonDocument& jsonMetadata, bool& isMultiImage);
     bool readFile(const QString& absFilePath, QByteArray& targetDataArray);
     bool applyMaskFromClippingPath(Magick::Image& manipulatedImg, common::EImageFormat format);
 

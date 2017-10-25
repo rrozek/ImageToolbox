@@ -10,6 +10,7 @@ namespace handlers
 class MultiPageImageHandler : public IHandler
 {
 public:
+    MultiPageImageHandler(const QJsonDocument& jsonImageInfo);
     MultiPageImageHandler(std::shared_ptr<Magick::Blob> blob, const QJsonDocument& jsonImageInfo);
 
     quint8 getImageCount() const override;

@@ -12,6 +12,7 @@
 
 #include "model/JsonModel.h"
 #include "ToolBox.h"
+#include "ImageManipulationToolbox.h"
 #include "UtilsGUI.h"
 
 class ToolBoxGui : public QDialog
@@ -26,10 +27,15 @@ private:
     void initExplorer();
     void initGallery();
     void initMetadata();
+    void initImageToolbox();
+    void initConnections();
+    void initLayout();
 
     void slotGalleryDirectoryChanged(const QModelIndex& index);
 
     void slotThumbLoaded(QIcon icon, int rowOfItemToUpdate, QString listGUID);
+    void slotCurrentPictureChanged(const QModelIndex &index);
+    void slotGallerySelectionChanged();
 
     QFileSystemModel *m_modelFolderExplorer;
     JsonModel *m_modelMetadata;
@@ -41,7 +47,11 @@ private:
     QTreeView *m_treeViewFolderExplorer;
     QTreeView *m_treeViewMetadata;
     QListWidget* m_listGallery;
+
+    ImageManipulationToolbox* m_imageToolbox;
+
     QString m_currentGalleryListGUID;
+    QString m_currentGalleryPath;
 
     GSNImageToolBox::common::UtilsGUI m_utilsGui;
 

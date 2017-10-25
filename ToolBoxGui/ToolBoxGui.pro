@@ -36,13 +36,15 @@ SOURCES += \
         ToolBoxGui.cpp \
         model/JsonModel.cpp \
         ThumbnailLoader.cpp \
-        UtilsGUI.cpp
+        UtilsGUI.cpp \
+        ImageManipulationToolbox.cpp
 
 HEADERS += \
         ToolBoxGui.h \
         model/JsonModel.h \
         ThumbnailLoader.h \
-        UtilsGUI.h
+        UtilsGUI.h \
+        ImageManipulationToolbox.h
 
 LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Release/release/ -lGSNImageToolbox
 #LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Debug/debug/ -lGSNImageToolbox
@@ -52,4 +54,7 @@ DEPENDPATH += $$PWD/../GSNImageToolbox/interface
 
 RESOURCES += \
     resources.qrc
+
+FORMS += \
+    ImageManipulationToolbox.ui
 

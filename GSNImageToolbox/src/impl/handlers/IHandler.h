@@ -19,6 +19,7 @@ namespace handlers
 class IHandler
 {
 public:
+    IHandler(const QJsonDocument& jsonImageInfo);
     IHandler(std::shared_ptr<Magick::Blob> blob, const QJsonDocument& jsonImageInfo);
     virtual ~IHandler();
 

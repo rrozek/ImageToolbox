@@ -7,9 +7,6 @@
 #include <QLibrary>
 
 #include <QDebug>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
 
 #include <QCoreApplication>
 #include <QProcessEnvironment>
@@ -35,47 +32,23 @@ ToolBox::~ToolBox()
 {
 }
 
+QJsonDocument ToolBox::pingSource(const QString &absFilePath)
+{
+    Magick::Image sourceImage;
+    QJsonDocument jsonMetadata;
+    bool isMultiImage = false;
+
+    prepareSource(absFilePath, sourceImage, jsonMetadata, isMultiImage);
+    return jsonMetadata;
+}
+
 void ToolBox::setSource(const QString &absFilePath)
 {
     Magick::Image sourceImage;
-    Magick::Blob jsonMetadataRaw;
-    try
-    {
-        sourceImage.quiet(true);
-        sourceImage.verbose(true);
-        sourceImage.ping(absFilePath.toStdString());
-        sourceImage.fileName("json:");
-        sourceImage.write(&jsonMetadataRaw);
-    }
-    catch( Magick::Error &error)
-    {
-        qWarning() << "abc ImageMagick Exception: " << error.what();
-        return;
-    }
-    QString jsonString = QString::fromLocal8Bit(static_cast<const char*>(jsonMetadataRaw.data()), static_cast<int>(jsonMetadataRaw.length()));
-    QJsonParseError error;
-    QJsonDocument jsonMetadata = QJsonDocument::fromJson(jsonString.toUtf8(), &error);
-    if (jsonMetadata.isNull())
-    {
-        qWarning() << "invalid input json structure. Error: " << error.errorString() << "at position: " << error.offset;
-        return;
-    }
+    QJsonDocument jsonMetadata;
     bool isMultiImage = false;
 
-    if (jsonMetadata.isArray())
-    {
-        if (jsonMetadata.array().size() > 1)
-            isMultiImage = true;
-        else
-            isMultiImage = false;
-    }
-    else if (jsonMetadata.isObject())
-        isMultiImage = false;
-    else
-    {
-        qWarning() << "neither object nor array detected. invalid json file?";
-        return;
-    }
+    prepareSource(absFilePath, sourceImage, jsonMetadata, isMultiImage);
 
     QByteArray content;
     readFile(absFilePath, content);
@@ -278,6 +251,48 @@ const ImageInfo& ToolBox::getImageInfo() const
         return ImageInfo::invalid;
     }
     return m_handler->getImageInfo();
+}
+
+void ToolBox::prepareSource(const QString& absFilePath, Magick::Image& sourceImage, QJsonDocument& jsonMetadata, bool &isMultiImage)
+{
+    Magick::Blob jsonMetadataRaw;
+    isMultiImage = false;
+    try
+    {
+        sourceImage.quiet(true);
+        sourceImage.verbose(true);
+        sourceImage.ping(absFilePath.toStdString());
+        sourceImage.fileName("json:");
+        sourceImage.write(&jsonMetadataRaw);
+    }
+    catch( Magick::Error &error)
+    {
+        qWarning() << "abc ImageMagick Exception: " << error.what();
+        return;
+    }
+    QString jsonString = QString::fromLocal8Bit(static_cast<const char*>(jsonMetadataRaw.data()), static_cast<int>(jsonMetadataRaw.length()));
+    QJsonParseError error;
+    jsonMetadata = QJsonDocument::fromJson(jsonString.toUtf8(), &error);
+    if (jsonMetadata.isNull())
+    {
+        qWarning() << "invalid input json structure. Error: " << error.errorString() << "at position: " << error.offset;
+        return;
+    }
+
+    if (jsonMetadata.isArray())
+    {
+        if (jsonMetadata.array().size() > 1)
+            isMultiImage = true;
+        else
+            isMultiImage = false;
+    }
+    else if (jsonMetadata.isObject())
+        isMultiImage = false;
+    else
+    {
+        qWarning() << "neither object nor array detected. invalid json file?";
+        return;
+    }
 }
 
 bool ToolBox::readFile(const QString& absFilePath, QByteArray& targetDataArray)

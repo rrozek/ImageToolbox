@@ -21,6 +21,8 @@ public:
     bool loadJson(const QByteArray& json);
     bool loadJson(const QJsonDocument& jsonDoc);
 
+    void clear();
+
     bool dumpTo(QJsonObject &jsonObject) const;
     bool dumpTo(QJsonArray &jsonArray) const;
     bool dumpTo(QJsonDocument &jsonDocument) const;

@@ -50,25 +50,40 @@ bool JsonModel::loadJson(const QByteArray &json)
 bool JsonModel::loadJson(const QJsonDocument &jsonDoc)
 {
     mDocument = jsonDoc;
-    if (!mDocument.isNull())
-    {
+//    if (!mDocument.isNull())
+//    {
         beginResetModel();
         if (mRootItem != Q_NULLPTR)
             delete mRootItem;
         mRootItem = new JsonObjectRoot(Q_NULLPTR);
-        if (mDocument.isArray()) {
+        if (mDocument.isArray())
+        {
             mRootItem->deserialize(QJsonValue(mDocument.array()));
             mRootItem->setType(QJsonValue::Array);
-        } else {
+        } else if (mDocument.isObject())
+        {
             mRootItem->deserialize(QJsonValue(mDocument.object()));
             mRootItem->setType(QJsonValue::Object);
         }
+        else
+        {
+            qWarning() << "Null document loaded";
+        }
         endResetModel();
         return true;
-    }
+//    }
 
     qDebug()<< "cannot load json";
     return false;
+}
+
+void JsonModel::clear()
+{
+    beginResetModel();
+    if (mRootItem != Q_NULLPTR)
+        delete mRootItem;
+    mRootItem = new JsonObjectRoot(Q_NULLPTR);
+    endResetModel();
 }
 
 //! Dumps model data into \a jsonObject
