@@ -37,14 +37,20 @@ SOURCES += \
         model/JsonModel.cpp \
         ThumbnailLoader.cpp \
         UtilsGUI.cpp \
-        ImageManipulationToolbox.cpp
+        ImageManipulationToolbox.cpp \
+        WaitingSpinnerWidget.cpp \
+        MetadataLoader.cpp \
+    FileConverter.cpp
 
 HEADERS += \
         ToolBoxGui.h \
         model/JsonModel.h \
         ThumbnailLoader.h \
         UtilsGUI.h \
-        ImageManipulationToolbox.h
+        ImageManipulationToolbox.h \
+        WaitingSpinnerWidget.h \
+        MetadataLoader.h \
+    FileConverter.h
 
 LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Release/release/ -lGSNImageToolbox
 #LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Debug/debug/ -lGSNImageToolbox

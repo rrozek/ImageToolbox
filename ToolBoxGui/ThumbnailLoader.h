@@ -5,7 +5,7 @@
 #include <QFileInfo>
 #include <QSize>
 #include <QString>
-#include <QListWidgetItem>
+#include <QIcon>
 
 class ThumbnailLoader : public QObject, public QRunnable
 {

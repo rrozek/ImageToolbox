@@ -8,11 +8,14 @@
 #include <QUuid>
 
 #include "ThumbnailLoader.h"
+#include "MetadataLoader.h"
 #include "Utils.h"
 #include "UtilsGUI.h"
 
 ToolBoxGui::ToolBoxGui(QWidget *parent)
     : QDialog(parent)
+    , m_waitingSpinnerMetadata(Q_NULLPTR)
+    , m_waitingSpinnerToolbox(Q_NULLPTR)
 {
     initExplorer();
     initGallery();
@@ -71,6 +74,8 @@ void ToolBoxGui::initMetadata()
 void ToolBoxGui::initImageToolbox()
 {
     m_imageToolbox = new ImageManipulationToolbox(this);
+    connect(m_imageToolbox, &ImageManipulationToolbox::signalBusy, this, &ToolBoxGui::slotToolboxBusy);
+    connect(m_imageToolbox, &ImageManipulationToolbox::signalReady, this, &ToolBoxGui::slotToolboxReady);
 }
 
 void ToolBoxGui::initConnections()
@@ -110,31 +115,21 @@ void ToolBoxGui::slotGalleryDirectoryChanged(const QModelIndex &index)
     m_currentGalleryPath = selectedPath;
     m_currentGalleryListGUID = QUuid::createUuid().toString();
 
-    /////////// gallery part START ///////////
     QDir currentGalleryDir(selectedPath);
     currentGalleryDir.setFilter(QDir::NoDotAndDotDot | QDir::Files);
     currentGalleryDir.setNameFilters(GSNImageToolBox::common::Utils::filterImagesList);
 
-    // maybe clean references to metadata part here as well
     QThreadPool::globalInstance()->clear();
     m_listGallery->clear();
     qDebug() << "Inserting " << currentGalleryDir.entryInfoList().size();
     for (QFileInfo fileInfo : currentGalleryDir.entryInfoList())
     {
-        // move thumbnail creation to separate thread
-        // set placeholder icon and exchange it with real image later
         QListWidgetItem* item = new QListWidgetItem(m_utilsGui.getIcon(GSNImageToolBox::common::EImageFormatFromString(fileInfo.suffix())), fileInfo.fileName(), m_listGallery);
         item->setSizeHint(QSize(m_listGallery->iconSize().width(), m_listGallery->iconSize().height() + (3 * item->font().pointSize())));
         ThumbnailLoader* loader = new ThumbnailLoader(m_listGallery->iconSize(), fileInfo.absoluteFilePath(), item->listWidget()->row(item), m_currentGalleryListGUID);
         connect(loader, &ThumbnailLoader::signalLoaded, this, &ToolBoxGui::slotThumbLoaded);
         QThreadPool::globalInstance()->start(loader);
     }
-    /////////// gallery part END ///////////
-
-    /////////// metadata part START ///////////
-
-    /////////// metadata part END ///////////
-
 }
 
 void ToolBoxGui::slotThumbLoaded(QIcon icon, int rowOfItemToUpdate, QString listGUID)
@@ -154,6 +149,21 @@ void ToolBoxGui::slotThumbLoaded(QIcon icon, int rowOfItemToUpdate, QString list
     item->setIcon(icon);
 }
 
+void ToolBoxGui::slotMetadataLoaded(QJsonDocument doc, QString imageGUID)
+{
+    if (m_currentImageGUID != imageGUID)
+    {
+        qWarning() << "list already invalid";
+        return;
+    }
+
+    m_modelMetadata->loadJson(doc);
+
+    m_waitingSpinnerMetadata->stop();
+    m_treeViewMetadata->expandAll();
+    m_treeViewMetadata->resizeColumnToContents(0);
+}
+
 void ToolBoxGui::slotCurrentPictureChanged(const QModelIndex &index)
 {
     if (m_listGallery->selectedItems().size() > 1)
@@ -170,14 +180,52 @@ void ToolBoxGui::slotCurrentPictureChanged(const QModelIndex &index)
         qWarning() << "but it might be that physical file was deleted";
         return;
     }
-    GSNImageToolBox::ToolBox toolbox;
-    m_modelMetadata->loadJson(toolbox.pingSource(filePath));
-    m_treeViewMetadata->expandAll();
-    m_treeViewMetadata->resizeColumnToContents(0);
+
+    m_currentImageGUID = QUuid::createUuid().toString();
+
+    if (m_waitingSpinnerMetadata != Q_NULLPTR)
+        delete m_waitingSpinnerMetadata;
+    m_waitingSpinnerMetadata = new WaitingSpinnerWidget(m_treeViewMetadata);
+    m_waitingSpinnerMetadata->start();
+
+    MetadataLoader* loader = new MetadataLoader(filePath, m_currentImageGUID);
+    connect(loader, &MetadataLoader::signalLoaded, this, &ToolBoxGui::slotMetadataLoaded);
+    QThreadPool::globalInstance()->start(loader);
+
+    m_imageToolbox->slotUpdateViewToFile(QFileInfo(filePath));
 }
 
 void ToolBoxGui::slotGallerySelectionChanged()
 {
     if (m_listGallery->selectedItems().size() > 1)
+    {
         m_modelMetadata->clear();
+        QFileInfoList listOfFiles;
+        for (QListWidgetItem* item : m_listGallery->selectedItems())
+        {
+            QDir currentDir(m_currentGalleryPath);
+            QString filePath = currentDir.absoluteFilePath(item->text());
+            if (!currentDir.exists(item->text()))
+            {
+                qWarning() << filePath << "does not actually exist. Thats almost impossible";
+                qWarning() << "but it might be that physical file was deleted";
+                continue;
+            }
+            listOfFiles.append(QFileInfo(filePath));
+        }
+        m_imageToolbox->slotUpdateViewToFile(listOfFiles);
+    }
+}
+
+void ToolBoxGui::slotToolboxBusy()
+{
+    if (m_waitingSpinnerToolbox != Q_NULLPTR)
+        delete m_waitingSpinnerToolbox;
+    m_waitingSpinnerToolbox = new WaitingSpinnerWidget(this);
+    m_waitingSpinnerToolbox->start();
+}
+
+void ToolBoxGui::slotToolboxReady()
+{
+    m_waitingSpinnerToolbox->stop();
 }

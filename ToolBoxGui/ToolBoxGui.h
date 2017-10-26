@@ -14,6 +14,7 @@
 #include "ToolBox.h"
 #include "ImageManipulationToolbox.h"
 #include "UtilsGUI.h"
+#include "WaitingSpinnerWidget.h"
 
 class ToolBoxGui : public QDialog
 {
@@ -34,8 +35,12 @@ private:
     void slotGalleryDirectoryChanged(const QModelIndex& index);
 
     void slotThumbLoaded(QIcon icon, int rowOfItemToUpdate, QString listGUID);
+    void slotMetadataLoaded(QJsonDocument doc, QString imageGUID);
     void slotCurrentPictureChanged(const QModelIndex &index);
     void slotGallerySelectionChanged();
+
+    void slotToolboxBusy();
+    void slotToolboxReady();
 
     QFileSystemModel *m_modelFolderExplorer;
     JsonModel *m_modelMetadata;
@@ -46,11 +51,14 @@ private:
 
     QTreeView *m_treeViewFolderExplorer;
     QTreeView *m_treeViewMetadata;
+    WaitingSpinnerWidget* m_waitingSpinnerMetadata;
+    WaitingSpinnerWidget* m_waitingSpinnerToolbox;
     QListWidget* m_listGallery;
 
     ImageManipulationToolbox* m_imageToolbox;
 
     QString m_currentGalleryListGUID;
+    QString m_currentImageGUID;
     QString m_currentGalleryPath;
 
     GSNImageToolBox::common::UtilsGUI m_utilsGui;
