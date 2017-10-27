@@ -1,5 +1,6 @@
-#ifndef JSONOBJECTBASE_H
-#define JSONOBJECTBASE_H
+#pragma once
+
+#include "ImageToolboxLib_global.h"
 
 #include <QJsonValue>
 #include <QJsonArray>
@@ -16,7 +17,7 @@
  * If object has children, then its \ref mValue is null and an appropriate \ref mType is set either to Object or Array
  */
 
-class JsonObjectBase
+class IMAGETOOLBOXLIB_SHARED_EXPORT JsonObjectBase
 {
 public:
     explicit JsonObjectBase(JsonObjectBase * parent = 0);
@@ -67,4 +68,4 @@ private:
     QJsonValue mValue;
     QJsonValue::Type mType;
 };
-#endif // JSONOBJECTBASE_H
+

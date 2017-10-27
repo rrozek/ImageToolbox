@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gsnimagetoolbox_global.h"
+#include "ImageToolboxLib_global.h"
 #include <QString>
 
 namespace json

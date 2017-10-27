@@ -2,7 +2,7 @@
 
 #include <QDebug>
 #include <QString>
-#include "gsnimagetoolbox_global.h"
+#include "ImageToolboxLib_global.h"
 
 namespace GSNImageToolBox
 {
@@ -10,7 +10,7 @@ namespace GSNImageToolBox
 namespace common
 {
 
-class GSNIMAGETOOLBOXSHARED_EXPORT Utils
+class IMAGETOOLBOXLIB_SHARED_EXPORT Utils
 {
 public:
     Utils();

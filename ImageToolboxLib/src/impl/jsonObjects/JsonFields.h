@@ -1,6 +1,6 @@
-#ifndef JSONFIELDS_H
-#define JSONFIELDS_H
+#pragma once
 
+#include "ImageToolboxLib_global.h"
 #include <QString>
 
 namespace json

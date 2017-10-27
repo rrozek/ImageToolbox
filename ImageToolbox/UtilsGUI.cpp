@@ -13,7 +13,6 @@ UtilsGUI::UtilsGUI()
 
 const QIcon UtilsGUI::getIcon(EImageFormat format) const
 {
-    qDebug() << "geticon " << format;
     return placeHolderIcons.value(format);
 }
 
@@ -35,7 +34,6 @@ QMap<EImageFormat, QIcon> UtilsGUI::initIcons()
 QIcon UtilsGUI::fromResource(QString path)
 {
     QIcon icon(QPixmap::fromImage(QImage(path, "PNG")));
-    qDebug() << icon;
     return icon;
 }
 

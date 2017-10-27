@@ -24,6 +24,8 @@ ToolBoxGui::ToolBoxGui(QWidget *parent)
 
     initConnections();
     initLayout();
+
+    setMinimumSize(800, 500);
 }
 
 ToolBoxGui::~ToolBoxGui()
@@ -47,7 +49,10 @@ void ToolBoxGui::initExplorer()
     m_treeViewFolderExplorer->setColumnHidden(2, true);
     m_treeViewFolderExplorer->setColumnHidden(3, true);
     m_treeViewFolderExplorer->setRootIndex(m_modelFolderExplorer->setRootPath("C:/"));
-    m_treeViewFolderExplorer->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    m_treeViewFolderExplorer->setMinimumWidth(100);
+    m_treeViewFolderExplorer->resizeColumnToContents(0);
+//    m_treeViewFolderExplorer->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+
 }
 
 void ToolBoxGui::initGallery()
@@ -56,7 +61,8 @@ void ToolBoxGui::initGallery()
     m_listGallery->setViewMode(QListWidget::IconMode);
     m_listGallery->setIconSize(QSize(120, 120));
     m_listGallery->setResizeMode(QListView::Adjust);
-    m_listGallery->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//    m_listGallery->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_listGallery->setMinimumWidth(500);
     m_listGallery->setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
@@ -68,7 +74,8 @@ void ToolBoxGui::initMetadata()
     m_treeViewMetadata = new QTreeView(this);
     m_treeViewMetadata->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_treeViewMetadata->setModel(m_modelMetadata);
-    m_treeViewMetadata->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_treeViewMetadata->setMinimumWidth(100);
+//    m_treeViewMetadata->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 }
 
 void ToolBoxGui::initImageToolbox()
@@ -89,6 +96,7 @@ void ToolBoxGui::initConnections()
                                                         });
 
     connect(m_treeViewFolderExplorer, &QTreeView::doubleClicked, this, &ToolBoxGui::slotGalleryDirectoryChanged);
+    connect(m_treeViewFolderExplorer, &QTreeView::clicked, this, &ToolBoxGui::slotAdjustExplorerToContents);
 
     connect(m_listGallery, &QListWidget::clicked, this, &ToolBoxGui::slotCurrentPictureChanged);
     connect(m_listGallery, &QListWidget::itemSelectionChanged, this, &ToolBoxGui::slotGallerySelectionChanged);
@@ -108,6 +116,7 @@ void ToolBoxGui::initLayout()
 
 void ToolBoxGui::slotGalleryDirectoryChanged(const QModelIndex &index)
 {
+    m_treeViewFolderExplorer->resizeColumnToContents(0);
     QString selectedPath = m_modelFolderExplorer->fileInfo(index).absoluteFilePath();
     if (selectedPath == m_currentGalleryPath)
         return;
@@ -130,6 +139,11 @@ void ToolBoxGui::slotGalleryDirectoryChanged(const QModelIndex &index)
         connect(loader, &ThumbnailLoader::signalLoaded, this, &ToolBoxGui::slotThumbLoaded);
         QThreadPool::globalInstance()->start(loader);
     }
+}
+
+void ToolBoxGui::slotAdjustExplorerToContents(const QModelIndex &/*index*/)
+{
+    m_treeViewFolderExplorer->resizeColumnToContents(0);
 }
 
 void ToolBoxGui::slotThumbLoaded(QIcon icon, int rowOfItemToUpdate, QString listGUID)

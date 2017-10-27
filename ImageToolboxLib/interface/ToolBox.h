@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gsnimagetoolbox_global.h"
+#include "ImageToolboxLib_global.h"
 
 //#include "ImageMagick/Magick++/Image.h"
 
@@ -29,7 +29,7 @@ namespace GSNImageToolBox
 {
 
 
-class GSNIMAGETOOLBOXSHARED_EXPORT ToolBox
+class IMAGETOOLBOXLIB_SHARED_EXPORT ToolBox
 {
 
 public:

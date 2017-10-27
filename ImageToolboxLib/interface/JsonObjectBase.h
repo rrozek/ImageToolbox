@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gsnimagetoolbox_global.h"
+#include "ImageToolboxLib_global.h"
 
 #include <QJsonValue>
 #include <QJsonArray>
@@ -17,7 +17,7 @@
  * If object has children, then its \ref mValue is null and an appropriate \ref mType is set either to Object or Array
  */
 
-class GSNIMAGETOOLBOXSHARED_EXPORT JsonObjectBase
+class IMAGETOOLBOXLIB_SHARED_EXPORT JsonObjectBase
 {
 public:
     explicit JsonObjectBase(JsonObjectBase * parent = 0);

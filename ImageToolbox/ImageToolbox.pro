@@ -8,8 +8,13 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = ToolBoxGui
+TARGET = ImageToolBox
 TEMPLATE = app
+
+CONFIG += console
+DESTDIR = ../build/bin
+OBJECTS_DIR = ../build/$${TARGET}/obj
+MOC_DIR = ../build/$${TARGET}/moc
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -25,7 +30,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_MESSAGELOGCONTEXT
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
-VERSION = 1.0.1
+VERSION = 1.0.0
 QMAKE_TARGET_COMPANY = "PBS Network GmbH"
 QMAKE_TARGET_PRODUCT = "ImageToolbox"
 QMAKE_TARGET_DESCRIPTION = "Image Toolbox"
@@ -52,11 +57,10 @@ HEADERS += \
         MetadataLoader.h \
     FileConverter.h
 
-LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Release/release/ -lGSNImageToolbox
-#LIBS += -L$$PWD/../build-GSNImageToolbox-Desktop_Qt_5_9_1_MSVC2015_64bit-Debug/debug/ -lGSNImageToolbox
+LIBS += -L$$PWD/../build/lib/ -lImageToolBoxLib1
 
-INCLUDEPATH += $$PWD/../GSNImageToolbox/interface
-DEPENDPATH += $$PWD/../GSNImageToolbox/interface
+INCLUDEPATH += $$PWD/../build/include
+DEPENDPATH += $$PWD/../build/include
 
 RESOURCES += \
     resources.qrc

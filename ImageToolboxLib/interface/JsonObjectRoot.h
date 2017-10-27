@@ -1,5 +1,5 @@
 #pragma once
-#include "gsnimagetoolbox_global.h"
+#include "ImageToolboxLib_global.h"
 
 #include "JsonObjectBase.h"
 
@@ -10,7 +10,7 @@
  *          It extends the standard JsonObjectBase functionality with
  *          Json integrity rules which need to be checked upon model change.
  */
-class GSNIMAGETOOLBOXSHARED_EXPORT JsonObjectRoot : public JsonObjectBase
+class IMAGETOOLBOXLIB_SHARED_EXPORT JsonObjectRoot : public JsonObjectBase
 {
 public:
     explicit JsonObjectRoot(JsonObjectBase * parent = 0);

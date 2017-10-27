@@ -33,6 +33,7 @@ private:
     void initLayout();
 
     void slotGalleryDirectoryChanged(const QModelIndex& index);
+    void slotAdjustExplorerToContents(const QModelIndex& index);
 
     void slotThumbLoaded(QIcon icon, int rowOfItemToUpdate, QString listGUID);
     void slotMetadataLoaded(QJsonDocument doc, QString imageGUID);

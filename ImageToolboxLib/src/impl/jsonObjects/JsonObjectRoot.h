@@ -1,5 +1,5 @@
-#ifndef JSONOBJECTROOT_H
-#define JSONOBJECTROOT_H
+#pragma once
+#include "ImageToolboxLib_global.h"
 
 #include "JsonObjectBase.h"
 
@@ -10,7 +10,7 @@
  *          It extends the standard JsonObjectBase functionality with
  *          Json integrity rules which need to be checked upon model change.
  */
-class JsonObjectRoot : public JsonObjectBase
+class IMAGETOOLBOXLIB_SHARED_EXPORT JsonObjectRoot : public JsonObjectBase
 {
 public:
     explicit JsonObjectRoot(JsonObjectBase * parent = 0);
@@ -22,4 +22,3 @@ public:
 private:
 };
 
-#endif // JSONOBJECTROOT_H
