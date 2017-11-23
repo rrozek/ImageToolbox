@@ -312,38 +312,6 @@ bool ToolBox::readFile(const QString& absFilePath, QByteArray& targetDataArray)
 void ToolBox::InitializeMagickEnvironment()
 {
     qDebug() << QCoreApplication::applicationDirPath();
-//    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-
-//    env.insert("MAGICK_CODER_MODULE_PATH", QCoreApplication::applicationDirPath().append("/magick/modules/coders"));
-//    env.insert("MAGICK_CODER_FILTER_PATH", QCoreApplication::applicationDirPath().append("/magick/modules/filters"));
-//    env.insert("LD_LIBRARY_PATH", QCoreApplication::applicationDirPath().append("/magick/lib"));
-//    env.insert("MAGICK_CONFIGURE_PATH", QCoreApplication::applicationDirPath().append("/magick/configuration"));
-//    qDebug() << QCoreApplication::libraryPaths();
-//    QStringList envList = env.toStringList();
-//    for ( QString singleEnv : envList )
-//    {
-//        qDebug() << "-----------";
-//        qDebug() << singleEnv;
-//    }
-
-//    QString path;
-//    QSet<QString> libraries;
-//    QDirIterator it{QCoreApplication::applicationDirPath(), {"*.dll"}};
-//    while (it.hasNext())
-//      libraries << it.next();
-//    bool progress = true;
-//    while (progress) {
-//      progress = false;
-//      for (auto i = libraries.begin(); i != libraries.end();) {
-//        QLibrary lib{*i};
-//        if (lib.load()) {
-//          progress = true;
-//          i = libraries.erase(i);
-//        } else
-//          ++i;
-//       }
-//    }
-
     Magick::InitializeMagick(QCoreApplication::applicationDirPath().toStdString().c_str());
     ToolBox::magickInitialized = true;
 }

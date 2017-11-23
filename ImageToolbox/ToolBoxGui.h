@@ -8,6 +8,9 @@
 #include <QListWidget>
 #include <QFileDialog>
 #include <QPushButton>
+#include <QMenu>
+#include <QMenuBar>
+#include <QAction>
 #include <QListView>
 
 #include "model/JsonModel.h"
@@ -25,6 +28,7 @@ public:
     ~ToolBoxGui();
 
 private:
+    void initMenu();
     void initExplorer();
     void initGallery();
     void initMetadata();
@@ -43,9 +47,14 @@ private:
     void slotToolboxBusy();
     void slotToolboxReady();
 
+    void slotConfigurationTriggered();
+
     QFileSystemModel *m_modelFolderExplorer;
     JsonModel *m_modelMetadata;
 
+    QMenuBar *m_menuBar;
+    QMenu *m_menuConfiguration;
+    QAction *m_actionConfiguration;
 
     QPushButton *m_browseButton;
     QFileDialog *m_browseDialog;

@@ -17,6 +17,7 @@ ToolBoxGui::ToolBoxGui(QWidget *parent)
     , m_waitingSpinnerMetadata(Q_NULLPTR)
     , m_waitingSpinnerToolbox(Q_NULLPTR)
 {
+    initMenu();
     initExplorer();
     initGallery();
     initMetadata();
@@ -30,7 +31,13 @@ ToolBoxGui::ToolBoxGui(QWidget *parent)
 
 ToolBoxGui::~ToolBoxGui()
 {
+}
 
+void ToolBoxGui::initMenu()
+{
+    m_menuBar = new QMenuBar(this);
+    m_menuConfiguration = m_menuBar->addMenu(tr("Menu"));
+    m_menuConfiguration->addAction(tr("Configuration"), this, &ToolBoxGui::slotConfigurationTriggered);
 }
 
 void ToolBoxGui::initExplorer()
@@ -107,6 +114,7 @@ void ToolBoxGui::initLayout()
     m_layout = new QGridLayout(this);
     setLayout(m_layout);
 
+    m_layout->setMenuBar(m_menuBar);
     m_layout->addWidget(m_treeViewFolderExplorer, 1, 0);
     m_layout->addWidget(m_browseButton, 0, 0);
     m_layout->addWidget(m_listGallery, 1, 2);
@@ -243,3 +251,9 @@ void ToolBoxGui::slotToolboxReady()
 {
     m_waitingSpinnerToolbox->stop();
 }
+
+void ToolBoxGui::slotConfigurationTriggered()
+{
+    qDebug() << "bang";
+}
+

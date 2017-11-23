@@ -36,3 +36,4 @@ void FileConverter::run()
 
     emit signalFinished(m_fileInfo, true);
 }
+
