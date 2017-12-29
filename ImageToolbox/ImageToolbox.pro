@@ -45,8 +45,12 @@ SOURCES += \
         ImageManipulationToolbox.cpp \
         WaitingSpinnerWidget.cpp \
         MetadataLoader.cpp \
-    FileConverter.cpp \
-    ConfigDialog.cpp
+        FileConverter.cpp \
+        ConfigDialog.cpp \
+        ConfigItemWidget.cpp \
+        ConfigItemWidgetBool.cpp \
+        ConfigItemWidgetSystemPath.cpp \
+        ConfigItemWidgetString.cpp
 
 HEADERS += \
         ToolBoxGui.h \
@@ -56,8 +60,12 @@ HEADERS += \
         ImageManipulationToolbox.h \
         WaitingSpinnerWidget.h \
         MetadataLoader.h \
-    FileConverter.h \
-    ConfigDialog.h
+        FileConverter.h \
+        ConfigDialog.h \
+        ConfigItemWidget.h \
+        ConfigItemWidgetBool.h \
+        ConfigItemWidgetSystemPath.h \
+        ConfigItemWidgetString.h
 
 LIBS += -L$$PWD/../build/lib/ -lImageToolBoxLib1
 

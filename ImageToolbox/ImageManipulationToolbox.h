@@ -2,6 +2,8 @@
 
 #include <QWidget>
 #include <QFileInfoList>
+#include <QSettings>
+#include <memory>
 
 #include "Common.h"
 
@@ -15,6 +17,8 @@ class ImageManipulationToolbox : public QWidget
 public:
     explicit ImageManipulationToolbox(QWidget *parent = nullptr);
 
+    void setSettings(std::shared_ptr<QSettings> settings);
+
     void slotUpdateViewToFile(const QFileInfo &fileInfo);
     void slotUpdateViewToFile(const QFileInfoList& fileInfos);
 signals:
@@ -26,15 +30,15 @@ private:
 
     void slotFileConverted(const QFileInfo &fileInfo, bool success);
 
-    void slotButtonAnyToPngClicked();
-    void slotButtonEPSToPngClicked();
-    void slotButtonEPSToTifClicked();
-    void slotButtonTifToPngClicked();
+    void slotButtonPngClicked();
+    void slotButtonTifClicked();
+    void slotButtonJpegClicked();
 
     void scheduleFileConversion(GSNImageToolBox::common::EImageFormat targetFormat);
 
     Ui::ImageManipulationToolbox *m_ui;
 
+    std::shared_ptr<QSettings> m_settings;
     QFileInfoList m_fileList;
 };
 

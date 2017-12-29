@@ -24,6 +24,7 @@ protected:
     void handleSource() override;
 
     void applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format) override;
+    void applyCMYKToRGBProfiles(Magick::Image &image, common::EImageFormat format) override;
 
 private:
     std::unique_ptr<Magick::Image> m_sourceImage;

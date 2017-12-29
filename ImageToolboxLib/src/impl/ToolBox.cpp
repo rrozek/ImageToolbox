@@ -223,7 +223,6 @@ char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 im
 
 quint8 ToolBox::getImageCount() const
 {
-
     if (m_handler == nullptr)
     {
         qWarning() << "No image set so far";

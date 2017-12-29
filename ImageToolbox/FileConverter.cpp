@@ -15,7 +15,7 @@ void FileConverter::run()
 {
     GSNImageToolBox::ToolBox toolbox;
     QByteArray imageData;
-    QString subdirName = "ToolBox_conver";
+    QString subdirName = "ImageToolbox_converts";
 
     m_fileInfo.dir().mkdir(subdirName);
     QString absTargetFilePath(m_fileInfo.absoluteDir().absolutePath() + "/" + subdirName + "/" + m_fileInfo.baseName() + "." + QString(GSNImageToolBox::common::EImageFormatString[m_targetFileFormat]));

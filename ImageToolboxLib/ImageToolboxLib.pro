@@ -80,3 +80,6 @@ INCLUDEPATH += $$PWD/src/include
 DEPENDPATH += $$PWD/src/include
 INCLUDEPATH += "C:/Program Files/ImageMagick-7.0.7-Q16/include"
 DEPENDPATH += "C:/Program Files/ImageMagick-7.0.7-Q16/include"
+
+RESOURCES += \
+    resources.qrc

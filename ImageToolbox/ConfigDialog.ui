@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Configuration</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -26,7 +26,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Discard|QDialogButtonBox::Save</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
      </property>
     </widget>
    </item>

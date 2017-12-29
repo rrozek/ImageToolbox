@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>profiles/CMYK/CoatedFOGRA27.icc</file>
+        <file>profiles/CMYK/CoatedFOGRA39.icc</file>
+        <file>profiles/CMYK/CoatedGRACoL2006.icc</file>
+        <file>profiles/CMYK/JapanColor2001Coated.icc</file>
+        <file>profiles/CMYK/JapanColor2001Uncoated.icc</file>
+        <file>profiles/CMYK/JapanColor2002Newspaper.icc</file>
+        <file>profiles/CMYK/JapanColor2003WebCoated.icc</file>
+        <file>profiles/CMYK/JapanWebCoated.icc</file>
+        <file>profiles/CMYK/UncoatedFOGRA29.icc</file>
+        <file>profiles/CMYK/USWebCoatedSWOP.icc</file>
+        <file>profiles/CMYK/USWebUncoated.icc</file>
+        <file>profiles/CMYK/WebCoatedFOGRA28.icc</file>
+        <file>profiles/CMYK/WebCoatedSWOP2006Grade3.icc</file>
+        <file>profiles/CMYK/WebCoatedSWOP2006Grade5.icc</file>
+        <file>profiles/RGB/AdobeRGB1998.icc</file>
+        <file>profiles/RGB/AppleRGB.icc</file>
+        <file>profiles/RGB/ColorMatchRGB.icc</file>
+        <file>profiles/RGB/PAL_SECAM.icc</file>
+        <file>profiles/RGB/SMPTE-C.icc</file>
+        <file>profiles/RGB/sRGB.icc</file>
+        <file>profiles/RGB/VideoHD.icc</file>
+        <file>profiles/RGB/VideoNTSC.icc</file>
+        <file>profiles/RGB/VideoPAL.icc</file>
+    </qresource>
+</RCC>

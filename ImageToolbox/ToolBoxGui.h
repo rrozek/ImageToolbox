@@ -18,6 +18,7 @@
 #include "ImageManipulationToolbox.h"
 #include "UtilsGUI.h"
 #include "WaitingSpinnerWidget.h"
+#include "ConfigDialog.h"
 
 class ToolBoxGui : public QDialog
 {
@@ -29,6 +30,7 @@ public:
 
 private:
     void initMenu();
+    void initConfiguration();
     void initExplorer();
     void initGallery();
     void initMetadata();
@@ -47,7 +49,9 @@ private:
     void slotToolboxBusy();
     void slotToolboxReady();
 
-    void slotConfigurationTriggered();
+    void slotUpdateSettings();
+
+    QStringList getFileNameFilters() const;
 
     QFileSystemModel *m_modelFolderExplorer;
     JsonModel *m_modelMetadata;
@@ -56,9 +60,6 @@ private:
     QMenu *m_menuConfiguration;
     QAction *m_actionConfiguration;
 
-    QPushButton *m_browseButton;
-    QFileDialog *m_browseDialog;
-
     QTreeView *m_treeViewFolderExplorer;
     QTreeView *m_treeViewMetadata;
     WaitingSpinnerWidget* m_waitingSpinnerMetadata;
@@ -66,6 +67,9 @@ private:
     QListWidget* m_listGallery;
 
     ImageManipulationToolbox* m_imageToolbox;
+
+    ConfigDialog* m_configDialog;
+    std::shared_ptr<QSettings> m_settings;
 
     QString m_currentGalleryListGUID;
     QString m_currentImageGUID;

@@ -15,11 +15,8 @@ class IMAGETOOLBOXLIB_SHARED_EXPORT Utils
 public:
     Utils();
 
-    static QString filterImagesRegex;
-    static QStringList filterImagesList;
+//    static QString filterImagesRegex;
 
-private:
-    static QStringList initList();
 };
 
 } // namespace common

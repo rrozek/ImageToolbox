@@ -39,7 +39,10 @@ public:
 protected:
 
     virtual void applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format) = 0;
+    virtual void applyCMYKToRGBProfiles(Magick::Image &image, common::EImageFormat format) = 0;
     virtual void handleSource() = 0;
+
+    bool applyIccProfile(Magick::Image &image, QString profileFilePath);
 
     std::shared_ptr<Magick::Blob> m_sourceBlob;
     std::unique_ptr<ImageInfo> m_imageInfo;

@@ -17,11 +17,15 @@ ToolBoxGui::ToolBoxGui(QWidget *parent)
     , m_waitingSpinnerMetadata(Q_NULLPTR)
     , m_waitingSpinnerToolbox(Q_NULLPTR)
 {
+    m_settings = std::make_shared<QSettings>("settings.ini", QSettings::IniFormat);
+
+    initConfiguration();
     initMenu();
     initExplorer();
     initGallery();
     initMetadata();
     initImageToolbox();
+
 
     initConnections();
     initLayout();
@@ -37,29 +41,36 @@ void ToolBoxGui::initMenu()
 {
     m_menuBar = new QMenuBar(this);
     m_menuConfiguration = m_menuBar->addMenu(tr("Menu"));
-    m_menuConfiguration->addAction(tr("Configuration"), this, &ToolBoxGui::slotConfigurationTriggered);
+    m_menuConfiguration->addAction(tr("Configuration"), m_configDialog, &ConfigDialog::show);
+}
+
+void ToolBoxGui::initConfiguration()
+{
+    m_configDialog = new ConfigDialog(m_settings, this);
+    m_configDialog->setModal(true);
 }
 
 void ToolBoxGui::initExplorer()
 {
     m_modelFolderExplorer = new QFileSystemModel(this);
-    m_modelFolderExplorer->setFilter(QDir::NoDotAndDotDot| QDir::AllDirs);
-
-    m_browseButton = new QPushButton(tr("Select base directory"), this);
-    m_browseDialog = new QFileDialog(this);
-    m_browseDialog->setFileMode(QFileDialog::Directory);
+    m_modelFolderExplorer->setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
+    m_modelFolderExplorer->setRootPath("C:/");
 
     m_treeViewFolderExplorer = new QTreeView(this);
 
     m_treeViewFolderExplorer->setModel(m_modelFolderExplorer);
-    m_treeViewFolderExplorer->setColumnHidden(1, true);
-    m_treeViewFolderExplorer->setColumnHidden(2, true);
-    m_treeViewFolderExplorer->setColumnHidden(3, true);
-    m_treeViewFolderExplorer->setRootIndex(m_modelFolderExplorer->setRootPath("C:/"));
+    m_treeViewFolderExplorer->hideColumn(1);
+    m_treeViewFolderExplorer->hideColumn(2);
+    m_treeViewFolderExplorer->hideColumn(3);
     m_treeViewFolderExplorer->setMinimumWidth(100);
-    m_treeViewFolderExplorer->resizeColumnToContents(0);
-//    m_treeViewFolderExplorer->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
+    if (QDir(m_settings->value(GSNImageToolBox::common::dirBaseDir).toString()).exists())
+        m_treeViewFolderExplorer->setCurrentIndex(m_modelFolderExplorer->
+                                               index(m_settings->value(GSNImageToolBox::common::dirBaseDir).toString()));
+    else
+        qWarning() << "Invalid directory selected";
+
+    m_treeViewFolderExplorer->resizeColumnToContents(0);
 }
 
 void ToolBoxGui::initGallery()
@@ -88,25 +99,21 @@ void ToolBoxGui::initMetadata()
 void ToolBoxGui::initImageToolbox()
 {
     m_imageToolbox = new ImageManipulationToolbox(this);
+    m_imageToolbox->setSettings(m_settings);
     connect(m_imageToolbox, &ImageManipulationToolbox::signalBusy, this, &ToolBoxGui::slotToolboxBusy);
     connect(m_imageToolbox, &ImageManipulationToolbox::signalReady, this, &ToolBoxGui::slotToolboxReady);
 }
 
 void ToolBoxGui::initConnections()
 {
-    connect(m_browseButton, &QPushButton::clicked, m_browseDialog, &QFileDialog::exec);
-    connect(m_browseDialog, &QFileDialog::fileSelected, [=](const QString &file)
-                                                        { if (QDir(file).exists())
-                                                              m_treeViewFolderExplorer->setRootIndex(m_modelFolderExplorer->setRootPath(file));
-                                                          else
-                                                              qWarning() << "Invalid directory selected";
-                                                        });
-
     connect(m_treeViewFolderExplorer, &QTreeView::doubleClicked, this, &ToolBoxGui::slotGalleryDirectoryChanged);
     connect(m_treeViewFolderExplorer, &QTreeView::clicked, this, &ToolBoxGui::slotAdjustExplorerToContents);
 
     connect(m_listGallery, &QListWidget::clicked, this, &ToolBoxGui::slotCurrentPictureChanged);
     connect(m_listGallery, &QListWidget::itemSelectionChanged, this, &ToolBoxGui::slotGallerySelectionChanged);
+
+    connect(m_configDialog, &ConfigDialog::signalSettingsChanged, this, &ToolBoxGui::slotUpdateSettings);
+
 }
 
 void ToolBoxGui::initLayout()
@@ -115,30 +122,26 @@ void ToolBoxGui::initLayout()
     setLayout(m_layout);
 
     m_layout->setMenuBar(m_menuBar);
-    m_layout->addWidget(m_treeViewFolderExplorer, 1, 0);
-    m_layout->addWidget(m_browseButton, 0, 0);
-    m_layout->addWidget(m_listGallery, 1, 2);
-    m_layout->addWidget(m_treeViewMetadata, 1, 3);
-    m_layout->addWidget(m_imageToolbox, 0, 3);
+    m_layout->addWidget(m_treeViewFolderExplorer, 0, 0, 2, 1);
+    m_layout->addWidget(m_listGallery, 0, 1, 2, 1);
+    m_layout->addWidget(m_imageToolbox, 0, 2);
+    m_layout->addWidget(m_treeViewMetadata, 1, 2);
 }
 
 void ToolBoxGui::slotGalleryDirectoryChanged(const QModelIndex &index)
 {
     m_treeViewFolderExplorer->resizeColumnToContents(0);
     QString selectedPath = m_modelFolderExplorer->fileInfo(index).absoluteFilePath();
-    if (selectedPath == m_currentGalleryPath)
-        return;
 
     m_currentGalleryPath = selectedPath;
     m_currentGalleryListGUID = QUuid::createUuid().toString();
 
     QDir currentGalleryDir(selectedPath);
     currentGalleryDir.setFilter(QDir::NoDotAndDotDot | QDir::Files);
-    currentGalleryDir.setNameFilters(GSNImageToolBox::common::Utils::filterImagesList);
+    currentGalleryDir.setNameFilters(getFileNameFilters());
 
     QThreadPool::globalInstance()->clear();
     m_listGallery->clear();
-    qDebug() << "Inserting " << currentGalleryDir.entryInfoList().size();
     for (QFileInfo fileInfo : currentGalleryDir.entryInfoList())
     {
         QListWidgetItem* item = new QListWidgetItem(m_utilsGui.getIcon(GSNImageToolBox::common::EImageFormatFromString(fileInfo.suffix())), fileInfo.fileName(), m_listGallery);
@@ -188,7 +191,7 @@ void ToolBoxGui::slotMetadataLoaded(QJsonDocument doc, QString imageGUID)
 
 void ToolBoxGui::slotCurrentPictureChanged(const QModelIndex &index)
 {
-    if (m_listGallery->selectedItems().size() > 1)
+    if (m_listGallery->selectedItems().size() != 1)
         return;
 
     QListWidgetItem* item = m_listGallery->item(index.row());
@@ -219,7 +222,7 @@ void ToolBoxGui::slotCurrentPictureChanged(const QModelIndex &index)
 
 void ToolBoxGui::slotGallerySelectionChanged()
 {
-    if (m_listGallery->selectedItems().size() > 1)
+    if (m_listGallery->selectedItems().size() != 1)
     {
         m_modelMetadata->clear();
         QFileInfoList listOfFiles;
@@ -252,8 +255,49 @@ void ToolBoxGui::slotToolboxReady()
     m_waitingSpinnerToolbox->stop();
 }
 
-void ToolBoxGui::slotConfigurationTriggered()
+void ToolBoxGui::slotUpdateSettings()
 {
-    qDebug() << "bang";
+    // updating view explorer
+    if (QDir(m_settings->value(GSNImageToolBox::common::dirBaseDir).toString()).exists())
+        m_treeViewFolderExplorer->setCurrentIndex(m_modelFolderExplorer->
+                                               index(m_settings->value(GSNImageToolBox::common::dirBaseDir).toString()));
+    else
+        qWarning() << "Invalid directory selected";
+
+    // updating file filters
+    slotGalleryDirectoryChanged(m_treeViewFolderExplorer->currentIndex());
+    m_listGallery->clearSelection();
+
+    // updating conversion toolbox is done on the fly
+
 }
+
+QStringList ToolBoxGui::getFileNameFilters() const
+{
+    QStringList result;
+    result.append("*.someBullshitToFilterAny");
+    m_settings->beginGroup("SupportedFormats");
+    for (QString key : m_settings->allKeys())
+    {
+        if (m_settings->value(key).toBool())
+        {
+            result.append(QString("*." + QString(key).toUpper()));
+            result.append(QString("*." + QString(key).toLower()));
+            if (key == "JPEG")
+            {
+                result.append("*.jpg");
+                result.append("*.JPG");
+            }
+            if (key == "TIF")
+            {
+                result.append("*.tiff");
+                result.append("*.TIFF");
+            }
+        }
+    }
+    m_settings->endGroup();
+    qDebug() << __func__ << result;
+    return result;
+}
+
 

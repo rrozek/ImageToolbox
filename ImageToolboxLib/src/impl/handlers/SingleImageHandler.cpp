@@ -41,7 +41,8 @@ char *SingleImageHandler::getImage(quint8 imageNumber, common::EImageFormat form
     try
     {
         Magick::Blob outputBlob;
-        applyMaskFromClippingPath(*m_sourceImage,format);
+        applyMaskFromClippingPath(*m_sourceImage, format);
+        applyCMYKToRGBProfiles(*m_sourceImage, format);
         std::string sourceMagick = m_sourceImage->magick();
         m_sourceImage->magick(common::EImageFormatString[format]);
         m_sourceImage->write(&outputBlob);
@@ -137,6 +138,7 @@ void SingleImageHandler::handleSource()
         m_sourceImage = std::make_unique<Magick::Image>();
         m_sourceImage->quiet(true);
         m_sourceImage->density(Magick::Point(m_imageInfo->getValue("root[0].image.resolution.x").toInt(),m_imageInfo->getValue("root[0].image.resolution.y").toInt()));
+
         Magick::Geometry geometry(  m_imageInfo->getValue("root[0].image.geometry.width").toInt()
                                   , m_imageInfo->getValue("root[0].image.geometry.height").toInt()
                                   , m_imageInfo->getValue("root[0].image.geometry.x").toInt()
@@ -152,6 +154,7 @@ void SingleImageHandler::handleSource()
             qWarning() << "Invalid geometry in image metadata";
             return;
         }
+
         m_sourceImage->quiet(true);
     }
     catch( Magick::Error &error)
@@ -173,12 +176,26 @@ void SingleImageHandler::applyMaskFromClippingPath(Magick::Image &image, common:
             image.alphaChannel(Magick::OpaqueAlphaChannel);
         }
         else
+        {
             qDebug() << "no clip path present.";
+        }
     }
     catch( Magick::Error &error)
     {
         qWarning() << Q_FUNC_INFO << "caught ImageMagick exception";
         qWarning() << error.what();
+    }
+}
+
+void SingleImageHandler::applyCMYKToRGBProfiles(Magick::Image &image, common::EImageFormat format)
+{
+    QVariant originalColorSpace = m_imageInfo->getValue("root[0].image.colorspace");
+    if (originalColorSpace.toString().contains("CMYK", Qt::CaseInsensitive)
+            && (format == common::JPEG || format == common::PNG)
+        )
+    {
+        applyIccProfile(image, ":/profiles/CMYK/USWebCoatedSWOP.icc");
+        applyIccProfile(image, ":/profiles/RGB/AdobeRGB1998.icc");
     }
 }
 

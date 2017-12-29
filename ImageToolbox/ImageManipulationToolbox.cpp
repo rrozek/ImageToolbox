@@ -10,11 +10,18 @@ ImageManipulationToolbox::ImageManipulationToolbox(QWidget *parent)
     , m_ui(new Ui::ImageManipulationToolbox)
 {
     m_ui->setupUi(this);
-    connect(m_ui->pushButton_anyToPng, &QPushButton::clicked, this, &ImageManipulationToolbox::slotButtonAnyToPngClicked);
-    connect(m_ui->pushButton_epsToPng, &QPushButton::clicked, this, &ImageManipulationToolbox::slotButtonEPSToPngClicked);
-    connect(m_ui->pushButton_epsToTif, &QPushButton::clicked, this, &ImageManipulationToolbox::slotButtonEPSToTifClicked);
-    connect(m_ui->pushButton_tifToPng, &QPushButton::clicked, this, &ImageManipulationToolbox::slotButtonTifToPngClicked);
-    setVisible(false);
+    connect(m_ui->pushButton_png, &QPushButton::clicked, this, &ImageManipulationToolbox::slotButtonPngClicked);
+    connect(m_ui->pushButton_tif, &QPushButton::clicked, this, &ImageManipulationToolbox::slotButtonTifClicked);
+    connect(m_ui->pushButton_jpeg, &QPushButton::clicked, this, &ImageManipulationToolbox::slotButtonJpegClicked);
+    m_ui->pushButton_tif->setEnabled(false);
+    m_ui->pushButton_jpeg->setEnabled(false);
+    m_ui->pushButton_png->setEnabled(false);
+    setVisible(true);
+}
+
+void ImageManipulationToolbox::setSettings(std::shared_ptr<QSettings> settings)
+{
+    m_settings = settings;
 }
 
 void ImageManipulationToolbox::slotUpdateViewToFile(const QFileInfo &fileInfo)
@@ -33,7 +40,6 @@ void ImageManipulationToolbox::slotUpdateViewToFile(const QFileInfoList &fileInf
 
 void ImageManipulationToolbox::updateViewToFile()
 {
-    setVisible(true);
     QList<GSNImageToolBox::common::EImageFormat> imageFormats;
     for (QFileInfo fileInfo : m_fileList)
     {
@@ -41,29 +47,40 @@ void ImageManipulationToolbox::updateViewToFile()
         if (fileFormat != GSNImageToolBox::common::COUNT && !imageFormats.contains(fileFormat))
             imageFormats.append(fileFormat);
     }
-    if (imageFormats.size() > 1)
+
+    m_ui->pushButton_tif->setEnabled(false);
+    m_ui->pushButton_jpeg->setEnabled(false);
+    m_ui->pushButton_png->setEnabled(false);
+    qDebug() << imageFormats;
+    if (imageFormats.contains(GSNImageToolBox::common::TIFF))
     {
-        m_ui->pushButton_anyToPng->setVisible(true);
-        m_ui->pushButton_epsToPng->setVisible(false);
-        m_ui->pushButton_epsToTif->setVisible(false);
-        m_ui->pushButton_tifToPng->setVisible(false);
+        m_ui->pushButton_jpeg->setEnabled(true);
+        m_ui->pushButton_png->setEnabled(true);
     }
-    else
+    if (imageFormats.contains(GSNImageToolBox::common::PNG))
     {
-        m_ui->pushButton_anyToPng->setVisible(false);
-        m_ui->pushButton_epsToPng->setVisible(false);
-        m_ui->pushButton_epsToTif->setVisible(false);
-        m_ui->pushButton_tifToPng->setVisible(false);
-        if (imageFormats.contains(GSNImageToolBox::common::TIFF))
-        {
-            m_ui->pushButton_tifToPng->setVisible(true);
-        }
-        if (imageFormats.contains(GSNImageToolBox::common::EPS))
-        {
-            m_ui->pushButton_epsToTif->setVisible(true);
-            m_ui->pushButton_epsToPng->setVisible(true);
-        }
+        m_ui->pushButton_jpeg->setEnabled(true);
     }
+    if (imageFormats.contains(GSNImageToolBox::common::JPEG))
+    {
+        m_ui->pushButton_png->setEnabled(true);
+    }
+    if (imageFormats.contains(GSNImageToolBox::common::EPS))
+    {
+        m_ui->pushButton_tif->setEnabled(true);
+        m_ui->pushButton_jpeg->setEnabled(true);
+        m_ui->pushButton_png->setEnabled(true);
+    }
+
+    // now to comply with settings
+    m_settings->beginGroup("SupportedFormats");
+    if (!m_settings->value("TIF").toBool())
+        m_ui->pushButton_tif->setEnabled(false);
+    if (!m_settings->value("JPEG").toBool())
+        m_ui->pushButton_jpeg->setEnabled(false);
+    if (!m_settings->value("PNG").toBool())
+        m_ui->pushButton_png->setEnabled(false);
+    m_settings->endGroup();
 }
 
 void ImageManipulationToolbox::slotFileConverted(const QFileInfo &fileInfo, bool success)
@@ -77,24 +94,19 @@ void ImageManipulationToolbox::slotFileConverted(const QFileInfo &fileInfo, bool
         emit signalReady();
 }
 
-void ImageManipulationToolbox::slotButtonAnyToPngClicked()
+void ImageManipulationToolbox::slotButtonPngClicked()
 {
     scheduleFileConversion(GSNImageToolBox::common::PNG);
 }
 
-void ImageManipulationToolbox::slotButtonEPSToPngClicked()
-{
-    scheduleFileConversion(GSNImageToolBox::common::PNG);
-}
-
-void ImageManipulationToolbox::slotButtonEPSToTifClicked()
+void ImageManipulationToolbox::slotButtonTifClicked()
 {
     scheduleFileConversion(GSNImageToolBox::common::TIFF);
 }
 
-void ImageManipulationToolbox::slotButtonTifToPngClicked()
+void ImageManipulationToolbox::slotButtonJpegClicked()
 {
-    scheduleFileConversion(GSNImageToolBox::common::PNG);
+    scheduleFileConversion(GSNImageToolBox::common::JPEG);
 }
 
 void ImageManipulationToolbox::scheduleFileConversion(GSNImageToolBox::common::EImageFormat targetFormat)

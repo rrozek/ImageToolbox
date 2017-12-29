@@ -60,5 +60,11 @@ void MultiPageImageHandler::applyMaskFromClippingPath(Magick::Image &image, comm
     Q_UNUSED(format)
 }
 
+void MultiPageImageHandler::applyCMYKToRGBProfiles(Magick::Image &image, common::EImageFormat format)
+{
+    Q_UNUSED(image)
+    Q_UNUSED(format)
+}
+
 }
 }

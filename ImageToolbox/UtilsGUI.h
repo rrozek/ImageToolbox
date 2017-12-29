@@ -13,6 +13,8 @@ namespace GSNImageToolBox
 namespace common
 {
 
+const QString dirConversionDestination = "Dir/ConversionDestination"; // not in use currently
+const QString dirBaseDir = "Dir/BaseDirectory";
 class UtilsGUI
 {
 public:
