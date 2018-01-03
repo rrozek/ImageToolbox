@@ -221,6 +221,37 @@ char *ToolBox::getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 im
     return m_handler->getThumbnail(cropToWidth, cropToHeight, imageNumber, dataSize);
 }
 
+QByteArray ToolBox::getChecksum(const QString &absFilePath, const QCryptographicHash::Algorithm algorithm) const
+{
+    QByteArray content;
+    readFile(absFilePath, content);
+    return getChecksum(content, algorithm);
+}
+
+QByteArray ToolBox::getChecksum(const QByteArray &data, const QCryptographicHash::Algorithm algorithm) const
+{
+    return QCryptographicHash::hash(data, algorithm);
+}
+
+QByteArray ToolBox::getChecksum(const QCryptographicHash::Algorithm algorithm) const
+{
+    if (m_handler == nullptr)
+    {
+        qWarning() << "No image set so far";
+        return QByteArray();
+    }
+    std::shared_ptr<Magick::Blob> sourceBlob = m_handler->getSource();
+    if (sourceBlob == nullptr)
+    {
+        qWarning() << "Source blob not set";
+        return QByteArray();
+    }
+    return getChecksum(QByteArray::fromRawData(static_cast<const char*>(sourceBlob->data())
+                                               , static_cast<int>(sourceBlob->length())
+                                               )
+                       , algorithm);
+}
+
 quint8 ToolBox::getImageCount() const
 {
     if (m_handler == nullptr)
@@ -294,7 +325,7 @@ void ToolBox::prepareSource(const QString& absFilePath, Magick::Image& sourceIma
     }
 }
 
-bool ToolBox::readFile(const QString& absFilePath, QByteArray& targetDataArray)
+bool ToolBox::readFile(const QString& absFilePath, QByteArray& targetDataArray) const
 {
     qDebug() << "read from: " << absFilePath;
     QFile img(absFilePath);

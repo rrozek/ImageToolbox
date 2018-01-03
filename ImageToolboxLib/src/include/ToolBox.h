@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QCryptographicHash>
 
 namespace GSNImageToolBox
 {
@@ -69,6 +70,10 @@ public:
     char* getThumbnail(quint32 cropToWidth, quint32 cropToHeight, size_t &dataSize);
     char* getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, size_t &dataSize);
 
+    QByteArray getChecksum(const QString& absFilePath, const QCryptographicHash::Algorithm algorithm) const;
+    QByteArray getChecksum(const QByteArray& data, const QCryptographicHash::Algorithm algorithm) const;
+    QByteArray getChecksum(const QCryptographicHash::Algorithm algorithm) const;
+
     quint8 getImageCount() const;
 
     void printImageInfo();
@@ -78,7 +83,7 @@ public:
 
 private:
     void prepareSource(const QString& absFilePath, Magick::Image& sourceImage, QJsonDocument& jsonMetadata, bool& isMultiImage);
-    bool readFile(const QString& absFilePath, QByteArray& targetDataArray);
+    bool readFile(const QString& absFilePath, QByteArray& targetDataArray) const;
     bool applyMaskFromClippingPath(Magick::Image& manipulatedImg, common::EImageFormat format);
 
     std::unique_ptr<handlers::IHandler> m_handler;

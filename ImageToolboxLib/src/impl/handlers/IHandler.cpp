@@ -66,6 +66,11 @@ char *IHandler::getThumbnail(float thumbPercentSize, quint8 imageNumber, size_t 
                         , imageNumber, dataSize);
 }
 
+std::shared_ptr<Magick::Blob> IHandler::getSource() const
+{
+    return m_sourceBlob;
+}
+
 bool IHandler::applyIccProfile(Magick::Image &image, QString profileFilePath)
 {
     QFile profileFile(profileFilePath);

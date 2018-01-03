@@ -36,6 +36,8 @@ public:
     virtual char *getThumbnail(float thumbPercentSize, quint8 imageNumber, common::EImageFormat format, size_t &dataSize);
     virtual char *getThumbnail(quint32 cropToWidth, quint32 cropToHeight, quint8 imageNumber, size_t &dataSize) = 0;
     virtual char *getThumbnail(float thumbPercentSize, quint8 imageNumber, size_t &dataSize);
+
+    std::shared_ptr<Magick::Blob> getSource() const;
 protected:
 
     virtual void applyMaskFromClippingPath(Magick::Image &image, common::EImageFormat format) = 0;
