@@ -25,13 +25,13 @@ class ToolBoxGui : public QDialog
     Q_OBJECT
 
 public:
-    ToolBoxGui(QWidget *parent = 0);
+    ToolBoxGui(QString startDirectory = QString(), QWidget *parent = 0);
     ~ToolBoxGui();
 
 private:
     void initMenu();
     void initConfiguration();
-    void initExplorer();
+    void initExplorer(const QString &startDirectory);
     void initGallery();
     void initMetadata();
     void initImageToolbox();
@@ -45,6 +45,9 @@ private:
     void slotMetadataLoaded(QJsonDocument doc, QString imageGUID);
     void slotCurrentPictureChanged(const QModelIndex &index);
     void slotGallerySelectionChanged();
+
+    void slotFolderExplorerContextMenuRequested(const QPoint& pos);
+    void slotGalleryContextMenuRequested(const QPoint& pos);
 
     void slotToolboxBusy();
     void slotToolboxReady();

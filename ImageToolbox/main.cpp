@@ -10,13 +10,14 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    qDebug() << QStyleFactory::keys();
-
     a.setStyle(QStyleFactory::create("Fusion"));
 
     GSNImageToolBox::ToolBox::InitializeMagickEnvironment();
 
-    ToolBoxGui w;
+    QString startDirectory;
+    if (a.arguments().size() > 1)
+        startDirectory = a.arguments()[1];
+    ToolBoxGui w(startDirectory);
     w.show();
 
     return a.exec();

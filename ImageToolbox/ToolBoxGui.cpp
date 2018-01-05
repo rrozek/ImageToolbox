@@ -6,13 +6,16 @@
 #include <QElapsedTimer>
 #include <QThreadPool>
 #include <QUuid>
+#include <QProcess>
+#include <QDesktopServices>
+#include <QApplication>
 
 #include "ThumbnailLoader.h"
 #include "MetadataLoader.h"
 #include "Utils.h"
 #include "UtilsGUI.h"
 
-ToolBoxGui::ToolBoxGui(QWidget *parent)
+ToolBoxGui::ToolBoxGui(QString startDirectory, QWidget *parent)
     : QDialog(parent)
     , m_waitingSpinnerMetadata(Q_NULLPTR)
     , m_waitingSpinnerToolbox(Q_NULLPTR)
@@ -21,7 +24,7 @@ ToolBoxGui::ToolBoxGui(QWidget *parent)
 
     initConfiguration();
     initMenu();
-    initExplorer();
+    initExplorer(startDirectory);
     initGallery();
     initMetadata();
     initImageToolbox();
@@ -50,7 +53,7 @@ void ToolBoxGui::initConfiguration()
     m_configDialog->setModal(true);
 }
 
-void ToolBoxGui::initExplorer()
+void ToolBoxGui::initExplorer(const QString& startDirectory)
 {
     m_modelFolderExplorer = new QFileSystemModel(this);
     m_modelFolderExplorer->setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
@@ -64,11 +67,18 @@ void ToolBoxGui::initExplorer()
     m_treeViewFolderExplorer->hideColumn(3);
     m_treeViewFolderExplorer->setMinimumWidth(100);
 
-    if (QDir(m_settings->value(GSNImageToolBox::common::dirBaseDir).toString()).exists())
+    if (!startDirectory.isEmpty())
+    {
+        m_treeViewFolderExplorer->setCurrentIndex(m_modelFolderExplorer->index(startDirectory));
+    }
+    else if (QDir(m_settings->value(GSNImageToolBox::common::dirBaseDir).toString()).exists())
         m_treeViewFolderExplorer->setCurrentIndex(m_modelFolderExplorer->
                                                index(m_settings->value(GSNImageToolBox::common::dirBaseDir).toString()));
     else
         qWarning() << "Invalid directory selected";
+
+    m_treeViewFolderExplorer->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_treeViewFolderExplorer, &QTreeView::customContextMenuRequested, this, &ToolBoxGui::slotFolderExplorerContextMenuRequested);
 
     m_treeViewFolderExplorer->resizeColumnToContents(0);
 }
@@ -82,6 +92,9 @@ void ToolBoxGui::initGallery()
 //    m_listGallery->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_listGallery->setMinimumWidth(500);
     m_listGallery->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    m_listGallery->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_listGallery, &QTreeView::customContextMenuRequested, this, &ToolBoxGui::slotGalleryContextMenuRequested);
 }
 
 void ToolBoxGui::initMetadata()
@@ -240,6 +253,109 @@ void ToolBoxGui::slotGallerySelectionChanged()
         }
         m_imageToolbox->slotUpdateViewToFile(listOfFiles);
     }
+}
+
+void ToolBoxGui::slotFolderExplorerContextMenuRequested(const QPoint &pos)
+{
+    QModelIndex hoveredIndex = m_treeViewFolderExplorer->indexAt(pos);
+    if (!hoveredIndex.isValid())
+        return;
+
+    QMenu *menu = new QMenu(this);
+    menu->addAction(tr("Show in Explorer"), this, [=]
+    {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(m_modelFolderExplorer->filePath(hoveredIndex)));
+    });
+    menu->addAction(tr("Open in new instance"), this, [=]
+    {
+        QProcess::startDetached(QApplication::applicationFilePath(), QStringList({m_modelFolderExplorer->filePath(hoveredIndex)}));
+    });
+
+    menu->popup(m_treeViewFolderExplorer->viewport()->mapToGlobal(pos));
+}
+
+void ToolBoxGui::slotGalleryContextMenuRequested(const QPoint &pos)
+{
+    QModelIndex hoveredIndex = m_listGallery->indexAt(pos);
+    if (!hoveredIndex.isValid())
+        return;
+
+    QDir currentDir(m_currentGalleryPath);
+    QString filePath = currentDir.absoluteFilePath(hoveredIndex.data(Qt::DisplayRole).toString());
+    if (!currentDir.exists(hoveredIndex.data(Qt::DisplayRole).toString()))
+    {
+        qWarning() << filePath << "does not actually exist. Thats almost impossible";
+        qWarning() << "but it might be that physical file was deleted";
+        return;
+    }
+    QFileInfo fileInfo(filePath);
+    GSNImageToolBox::common::EImageFormat imageFormat = GSNImageToolBox::common::EImageFormatFromString(fileInfo.completeSuffix());
+
+    QMenu *menu = new QMenu(this);
+    menu->addAction(tr("Open"), this, [=]
+    {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));;
+    });
+
+    QMenu *convertMenu = menu->addMenu(tr("Convert"));
+    QAction *actionToJpeg = convertMenu->addAction(tr("to JPEG"), this, [=]
+    {
+        m_imageToolbox->scheduleFileConversion(fileInfo, GSNImageToolBox::common::JPEG);
+    });
+    QAction *actionToPng = convertMenu->addAction(tr("to PNG"), this, [=]
+    {
+        m_imageToolbox->scheduleFileConversion(fileInfo, GSNImageToolBox::common::PNG);
+    });
+    QAction *actionToTiff = convertMenu->addAction(tr("to TIFF"), this, [=]
+    {
+        m_imageToolbox->scheduleFileConversion(fileInfo, GSNImageToolBox::common::TIFF);
+    });
+
+    actionToTiff->setEnabled(false);
+    actionToJpeg->setEnabled(false);
+    actionToPng->setEnabled(false);
+    if (imageFormat == GSNImageToolBox::common::TIFF)
+    {
+        actionToJpeg->setEnabled(true);
+        actionToPng->setEnabled(true);
+    }
+    if (imageFormat == GSNImageToolBox::common::PNG)
+    {
+        actionToJpeg->setEnabled(true);
+    }
+    if (imageFormat == GSNImageToolBox::common::JPEG)
+    {
+        actionToPng->setEnabled(true);
+    }
+    if (imageFormat == GSNImageToolBox::common::EPS)
+    {
+        actionToTiff->setEnabled(true);
+        actionToJpeg->setEnabled(true);
+        actionToPng->setEnabled(true);
+    }
+
+    // now to comply with settings
+    m_settings->beginGroup("SupportedFormats");
+    if (!m_settings->value("TIF").toBool())
+        actionToTiff->setEnabled(false);
+    if (!m_settings->value("JPEG").toBool())
+        actionToJpeg->setEnabled(false);
+    if (!m_settings->value("PNG").toBool())
+        actionToPng->setEnabled(false);
+    m_settings->endGroup();
+
+
+    menu->addSeparator();
+    menu->addAction(tr("Delete"), this, [=]
+    {
+        if (QFile::remove(filePath))
+        {
+            QListWidgetItem* removedItem = m_listGallery->takeItem(hoveredIndex.row());
+            delete removedItem;
+        }
+    });
+
+    menu->popup(m_listGallery->viewport()->mapToGlobal(pos));
 }
 
 void ToolBoxGui::slotToolboxBusy()

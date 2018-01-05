@@ -21,6 +21,10 @@ public:
 
     void slotUpdateViewToFile(const QFileInfo &fileInfo);
     void slotUpdateViewToFile(const QFileInfoList& fileInfos);
+
+    void scheduleFileConversion(const QFileInfo& fileInfo, GSNImageToolBox::common::EImageFormat targetFormat);
+    void scheduleFileConversion(const QFileInfoList& fileInfos, GSNImageToolBox::common::EImageFormat targetFormat);
+
 signals:
     void signalBusy();
     void signalReady();

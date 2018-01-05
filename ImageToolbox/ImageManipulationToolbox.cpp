@@ -38,6 +38,22 @@ void ImageManipulationToolbox::slotUpdateViewToFile(const QFileInfoList &fileInf
     updateViewToFile();
 }
 
+void ImageManipulationToolbox::scheduleFileConversion(const QFileInfo &fileInfo, GSNImageToolBox::common::EImageFormat targetFormat)
+{
+    emit signalBusy();
+    FileConverter* converter = new FileConverter(fileInfo, targetFormat);
+    connect(converter, &FileConverter::signalFinished, this, &ImageManipulationToolbox::slotFileConverted);
+    QThreadPool::globalInstance()->start(converter);
+}
+
+void ImageManipulationToolbox::scheduleFileConversion(const QFileInfoList &fileInfos, GSNImageToolBox::common::EImageFormat targetFormat)
+{
+    for ( const QFileInfo& fileInfo : fileInfos )
+    {
+        scheduleFileConversion(fileInfo, targetFormat);
+    }
+}
+
 void ImageManipulationToolbox::updateViewToFile()
 {
     QList<GSNImageToolBox::common::EImageFormat> imageFormats;
@@ -51,7 +67,6 @@ void ImageManipulationToolbox::updateViewToFile()
     m_ui->pushButton_tif->setEnabled(false);
     m_ui->pushButton_jpeg->setEnabled(false);
     m_ui->pushButton_png->setEnabled(false);
-    qDebug() << imageFormats;
     if (imageFormats.contains(GSNImageToolBox::common::TIFF))
     {
         m_ui->pushButton_jpeg->setEnabled(true);
@@ -111,11 +126,5 @@ void ImageManipulationToolbox::slotButtonJpegClicked()
 
 void ImageManipulationToolbox::scheduleFileConversion(GSNImageToolBox::common::EImageFormat targetFormat)
 {
-    for ( QFileInfo fileInfo : m_fileList )
-    {
-        emit signalBusy();
-        FileConverter* converter = new FileConverter(fileInfo, targetFormat);
-        connect(converter, &FileConverter::signalFinished, this, &ImageManipulationToolbox::slotFileConverted);
-        QThreadPool::globalInstance()->start(converter);
-    }
+    scheduleFileConversion(m_fileList, targetFormat);
 }
