@@ -29,6 +29,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 DEFINES += QT_MESSAGELOGCONTEXT
 #DEFINES += QT_NO_DEBUG_OUTPUT
+DEFINES += MAGICKCORE_HDRI_ENABLE
+DEFINES += MAGICKCORE_QUANTUM_DEPTH=32
+message($$DEFINES)
 
 VERSION = 1.0.0
 QMAKE_TARGET_COMPANY = "PBS Network GmbH"
@@ -66,8 +69,7 @@ HEADERS += \
         ConfigItemWidgetBool.h \
         ConfigItemWidgetSystemPath.h \
         ConfigItemWidgetString.h
-
-LIBS += -L$$PWD/../build/lib/ -lImageToolBoxLib1
+LIBS += -L$$PWD/../build/lib/ -lImageToolBoxLib
 
 INCLUDEPATH += $$PWD/../build/include
 DEPENDPATH += $$PWD/../build/include

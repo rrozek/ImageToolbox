@@ -159,7 +159,7 @@ void ToolBoxGui::slotGalleryDirectoryChanged(const QModelIndex &index)
     {
         QListWidgetItem* item = new QListWidgetItem(m_utilsGui.getIcon(GSNImageToolBox::common::EImageFormatFromString(fileInfo.suffix())), fileInfo.fileName(), m_listGallery);
         item->setSizeHint(QSize(m_listGallery->iconSize().width(), m_listGallery->iconSize().height() + (3 * item->font().pointSize())));
-        ThumbnailLoader* loader = new ThumbnailLoader(m_listGallery->iconSize(), fileInfo.absoluteFilePath(), item->listWidget()->row(item), m_currentGalleryListGUID);
+        ThumbnailLoader* loader = new ThumbnailLoader(m_listGallery->iconSize(), fileInfo, item->listWidget()->row(item), m_currentGalleryListGUID);
         connect(loader, &ThumbnailLoader::signalLoaded, this, &ToolBoxGui::slotThumbLoaded);
         QThreadPool::globalInstance()->start(loader);
     }

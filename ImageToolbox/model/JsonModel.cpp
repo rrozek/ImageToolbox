@@ -108,17 +108,17 @@ bool JsonModel::dumpTo(QJsonDocument &jsonDocument) const
 }
 
 //! Dumps model data into \a byteArray
-bool JsonModel::dumpTo(QByteArray &byteArray) const
-{
-    byteArray.clear();
-    QJsonDocument doc;
-    if (dumpTo(doc))
-    {
-        byteArray = doc.toBinaryData();
-        return true;
-    }
-    return false;
-}
+//bool JsonModel::dumpTo(QByteArray &byteArray) const
+//{
+//    byteArray.clear();
+//    QJsonDocument doc;
+//    if (dumpTo(doc))
+//    {
+//        byteArray = doc.toBinaryData();
+//        return true;
+//    }
+//    return false;
+//}
 
 //! Dumps model data into new QJsonValue
 QJsonValue JsonModel::dump() const

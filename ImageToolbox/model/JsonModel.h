@@ -26,7 +26,7 @@ public:
     bool dumpTo(QJsonObject &jsonObject) const;
     bool dumpTo(QJsonArray &jsonArray) const;
     bool dumpTo(QJsonDocument &jsonDocument) const;
-    bool dumpTo(QByteArray &byteArray) const;
+//    bool dumpTo(QByteArray &byteArray) const;
 
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const Q_DECL_OVERRIDE;

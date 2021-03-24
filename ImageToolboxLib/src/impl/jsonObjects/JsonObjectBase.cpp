@@ -3,7 +3,7 @@
 //! Constructor
 JsonObjectBase::JsonObjectBase(JsonObjectBase *parent)
     : mParent(parent)
-    , mKey(QString::null)
+    , mKey(QString())
     , mValue(QJsonValue())
     , mType(QJsonValue::Undefined)
 {

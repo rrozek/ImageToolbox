@@ -15,13 +15,15 @@ MOC_DIR = ../build/$${TARGET}/moc
 
 CONFIG += c++11 c++14
 DEFINES += IMAGETOOLBOXLIB
+DEFINES += MAGICKCORE_HDRI_ENABLE
+DEFINES += MAGICKCORE_QUANTUM_DEPTH=32
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-
+message($$DEFINES)
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -56,14 +58,14 @@ HEADERS += \
 
 win32: QMAKE_PRE_LINK += if not exist \"$$absolute_path(../build/include)\" $$QMAKE_MKDIR \"$$absolute_path(../build/include)\" $$escape_expand(\\n\\t)
 unix: QMAKE_PRE_LINK += $$QMAKE_MKDIR -p \"$$absolute_path(../build/include)\" $$escape_expand(\\n\\t)
-QMAKE_PRE_LINK += $$QMAKE_COPY \"$$absolute_path(./src/include)/\\\*.h\" \"$$absolute_path(./interface)\" $$escape_expand(\\n\\t)
-QMAKE_PRE_LINK += $$QMAKE_COPY \"$$absolute_path(./src/impl/Common)/\\\*.h\" \"$$absolute_path(./interface)\" $$escape_expand(\\n\\t)
-QMAKE_PRE_LINK += $$QMAKE_COPY \"$$absolute_path(./src/impl/jsonObjects)/\\\*.h\" \"$$absolute_path(./interface)\" $$escape_expand(\\n\\t)
-QMAKE_PRE_LINK += $$QMAKE_COPY \"$$absolute_path(./interface)/\\\*.h\" \"$$absolute_path(../build/include)\" $$escape_expand(\\n\\t)
+QMAKE_PRE_LINK += $$QMAKE_COPY $$absolute_path(./src/include)/*.h \"$$absolute_path(./interface)\" $$escape_expand(\\n\\t)
+QMAKE_PRE_LINK += $$QMAKE_COPY $$absolute_path(./src/impl/Common)/*.h \"$$absolute_path(./interface)\" $$escape_expand(\\n\\t)
+QMAKE_PRE_LINK += $$QMAKE_COPY $$absolute_path(./src/impl/jsonObjects)/*.h \"$$absolute_path(./interface)\" $$escape_expand(\\n\\t)
+QMAKE_PRE_LINK += $$QMAKE_COPY $$absolute_path(./interface)/*.h \"$$absolute_path(../build/include)\" $$escape_expand(\\n\\t)
 
 win32: QMAKE_POST_LINK += if not exist \"$$absolute_path(../build/bin)\" $$QMAKE_MKDIR \"$$absolute_path(../build/bin)\" $$escape_expand(\\n\\t)
 unix: QMAKE_POST_LINK += $$QMAKE_MKDIR -p \"$$absolute_path(../build/bin)\" $$escape_expand(\\n\\t)
-QMAKE_POST_LINK += $$QMAKE_COPY \"$$absolute_path(../build/lib/)\" \"$$absolute_path(../build/bin/)\" $$escape_expand(\\n\\t)
+QMAKE_POST_LINK += $$QMAKE_COPY $$absolute_path(../build/lib/)/* \"$$absolute_path(../build/bin/)\" $$escape_expand(\\n\\t)
 export(QMAKE_POST_LINK)
 
 unix {
@@ -73,13 +75,13 @@ unix {
 
 include(src/impl/Common/Common.pri)
 
-LIBS += -L"C:/Program Files/ImageMagick-7.0.7-Q16/lib" -lCORE_RL_Magick++_
-LIBS += -L"C:/Program Files/ImageMagick-7.0.7-Q16/lib" -lCORE_RL_MagickCore_
+LIBS += -L/usr/local/lib/ -lMagick++-7.Q16HDRI
+LIBS += -L/usr/local/lib/ -lMagickCore-7.Q16HDRI
 
 INCLUDEPATH += $$PWD/src/include
 DEPENDPATH += $$PWD/src/include
-INCLUDEPATH += "C:/Program Files/ImageMagick-7.0.7-Q16/include"
-DEPENDPATH += "C:/Program Files/ImageMagick-7.0.7-Q16/include"
+INCLUDEPATH += "/usr/local/include/ImageMagick-7"
+DEPENDPATH += "/usr/local/include/ImageMagick-7"
 
 RESOURCES += \
     resources.qrc
